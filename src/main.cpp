@@ -146,7 +146,7 @@ int main(int argc, char** argv) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     //! Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(512, 512, "CS475/CS675 Tutorial 3: Rotating  Colorcube", NULL, NULL);
+    window = glfwCreateWindow(512, 512, "Assignment 1", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return -1;
