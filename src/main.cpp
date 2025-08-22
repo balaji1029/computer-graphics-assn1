@@ -35,17 +35,12 @@ GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
 GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
 
 //Running variable to toggle culling on/off
-bool enable_culling = true;
+bool enable_culling = false;
 //Running variable to toggle wireframe/solid modelling
 bool solid = true;
 
 GLuint shaderProgram;
 GLuint vbo, vao;
-
-glm::mat4 rotation_matrix;
-glm::mat4 view_matrix;
-glm::mat4 ortho_matrix;
-glm::mat4 modelviewproject_matrix;
 GLuint uModelViewProjectMatrix;
 
 //-----------------------------------------------------------------
@@ -65,13 +60,7 @@ void initBuffersGL(std::vector<std::unique_ptr<shape_t>>& shapes) {
     
     // set up vertex arrays
     GLuint vPosition = glGetAttribLocation(shaderProgram, "vPosition");
-    // glEnableVertexAttribArray(vPosition);
-    // glVertexAttribPointer(vPosition, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(0));
-
     GLuint vColor = glGetAttribLocation(shaderProgram, "vColor");
-    // glEnableVertexAttribArray(vColor);
-    // glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(sizeof(v_positions)));
-    
     uModelViewProjectMatrix = glGetUniformLocation(shaderProgram, "uModelViewProjectMatrix");
 
     if (vPosition == -1 || vColor == -1 || uModelViewProjectMatrix == -1) {
@@ -80,7 +69,7 @@ void initBuffersGL(std::vector<std::unique_ptr<shape_t>>& shapes) {
         exit(-1);
     }
     // std::cout << "initBuffersGL: Adding box_t, shapes.size() = " << shapes.size() << std::endl;
-    shapes.push_back(std::make_unique<box_t>(0, vPosition, vColor));
+    shapes.push_back(std::make_unique<cylinder_t>(4, vPosition, vColor));
     // std::cout << "initBuffersGL: After adding, shapes.size() = " << shapes.size() << std::endl;
     // shapes.push_back(box_t(0, vPosition, vColor));
 }
@@ -89,14 +78,14 @@ void renderGL(std::vector<glm::mat4> matrixStack, std::vector<std::unique_ptr<sh
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     matrixStack.clear();
-
-    rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f, 0.0f, 0.0f));
+    
+    glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f, 0.0f, 0.0f));
     rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f, 1.0f, 0.0f));
     rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f, 0.0f, 1.0f));
 
-    view_matrix = glm::lookAt(glm::vec3(0.0, 0.0, -2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    glm::mat4 view_matrix = glm::lookAt(glm::vec3(0.0, 0.0, -2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 
-    ortho_matrix = glm::ortho(-2.0, 2.0, -2.0, 2.0, -20.0, 20.0);
+    glm::mat4 ortho_matrix = glm::ortho(-2.0, 2.0, -2.0, 2.0, -20.0, 20.0);
 
     matrixStack.push_back(ortho_matrix * view_matrix * rotation_matrix);
     
@@ -113,13 +102,8 @@ void renderGL(std::vector<glm::mat4> matrixStack, std::vector<std::unique_ptr<sh
     }
     glPolygonMode(GL_FRONT_AND_BACK, solid ? GL_FILL : GL_LINE);
 
-    // for (const auto& shape : shapes) {
-    //     shape.draw(matrixStack, uModelViewProjectMatrix);
-    // }
-
     // Draw shapes
     for (const auto& shape : shapes) {
-        // std::cout << "Drawing shape with " << 36 << " vertices" << std::endl;
         shape->draw(matrixStack, uModelViewProjectMatrix);
     }
 

@@ -44,7 +44,23 @@ public:
 
 class cylinder_t : public shape_t {
 public:
-    cylinder_t(uint32_t level = 0);
+    cylinder_t(uint32_t level = 0, GLuint vPosition = 0, GLuint vColor = 0);
+    void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const override {
+        //matrixStack multiply
+        std::unique_ptr<glm::mat4> ms_mult;
+
+        for (const auto& mat : matrixStack) {
+            if (!ms_mult) {
+                ms_mult = std::make_unique<glm::mat4>(mat);
+            } else {
+                *ms_mult = (*ms_mult) * mat;
+            }
+        }
+
+        glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+        glBindVertexArray (vao);
+        glDrawArrays(GL_TRIANGLES, 0, v_positions.size());
+    }
 };
 
 class box_t : public shape_t {

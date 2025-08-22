@@ -8,7 +8,7 @@ namespace csX75
   void initGL(void)
   {
     //Set framebuffer clear color
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.95f, 0.95f, 0.95f, 1.0f);
     //Set depth buffer furthest depth
     glClearDepth(1.0);
     //Set depth test to less-than
