@@ -13,7 +13,6 @@ namespace csX75
 {
   //! Initialize GL State
   void initGL(void);
- 
   //!GLFW Error Callback
   void error_callback(int error, const char* description);
   //!GLFW framebuffer resize callback

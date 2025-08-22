@@ -5,16 +5,21 @@ GLEWLIB= -lGLEW
 GLFWLIB = -lglfw
 LIBS=$(OPENGLLIB) $(GLEWLIB) $(GLFWLIB)
 LDFLAGS=-L/usr/local/lib 
-CPPFLAGS=-I/usr/local/include -I./
+CPPFLAGS=-I/usr/local/include
 
-BIN=07_hierarchical_modelling
-SRCS=07_hierarchical_modelling.cpp gl_framework.cpp shader_util.cpp hierarchy_node.cpp
-INCLUDES=gl_framework.hpp shader_util.hpp 07_hierarchical_modelling.hpp hierarchy_node.hpp
+BINDIR=bin/
+BIN=$(BINDIR)/main
+SRC=src/
+INCLUDES=./include/
+SRCS=$(shell find $(SRC) -name '*.cpp')
 
 all: $(BIN)
 
-$(BIN): $(SRCS) $(INCLUDES)
-	g++ $(CPPFLAGS) $(SRCS) -o $(BIN) $(LDFLAGS) $(LIBS)
+$(BIN): $(SRCS) $(INCLUDES) $(BINDIR)
+	g++ $(CPPFLAGS) $(SRCS) -o $(BIN) $(LDFLAGS) $(LIBS) -I$(INCLUDES)
+
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
 clean:
-	rm -f *~ *.o $(BIN)
+	rm -rf $(BINDIR)
