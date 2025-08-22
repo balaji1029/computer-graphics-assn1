@@ -10,13 +10,14 @@ CPPFLAGS=-I/usr/local/include
 BINDIR=bin/
 BIN=$(BINDIR)/main
 SRC=src/
-INCLUDES=./include/
+INCLUDEDIR=./include/
 SRCS=$(shell find $(SRC) -name '*.cpp')
+INCLUDES=$(shell find $(INCLUDEDIR) -name '*.hpp')
 
 all: $(BIN)
 
 $(BIN): $(SRCS) $(INCLUDES) $(BINDIR)
-	g++ $(CPPFLAGS) $(SRCS) -o $(BIN) $(LDFLAGS) $(LIBS) -I$(INCLUDES)
+	g++ $(CPPFLAGS) $(SRCS) -o $(BIN) $(LDFLAGS) $(LIBS) -I$(INCLUDEDIR)
 
 $(BINDIR):
 	mkdir -p $(BINDIR)

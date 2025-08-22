@@ -50,60 +50,7 @@ GLuint uModelViewProjectMatrix;
 
 //-----------------------------------------------------------------
 
-//6 faces, 2 triangles/face, 3 vertices/triangle
-// const int num_vertices = 36;
-
-//Eight vertices in homogenous coordinates
-// glm::vec4 positions[8] = {
-//   glm::vec4(-0.5, -0.5, 0.5, 1.0),
-//   glm::vec4(-0.5, 0.5, 0.5, 1.0),
-//   glm::vec4(0.5, 0.5, 0.5, 1.0),
-//   glm::vec4(0.5, -0.5, 0.5, 1.0),
-//   glm::vec4(-0.5, -0.5, -0.5, 1.0),
-//   glm::vec4(-0.5, 0.5, -0.5, 1.0),
-//   glm::vec4(0.5, 0.5, -0.5, 1.0),
-//   glm::vec4(0.5, -0.5, -0.5, 1.0)
-// };
-
-// //RGBA colors
-// glm::vec4 colors[8] = {
-//   glm::vec4(0.0, 0.0, 0.0, 1.0),
-//   glm::vec4(1.0, 0.0, 0.0, 1.0),
-//   glm::vec4(1.0, 1.0, 0.0, 1.0),
-//   glm::vec4(0.0, 1.0, 0.0, 1.0),
-//   glm::vec4(0.0, 0.0, 1.0, 1.0),
-//   glm::vec4(1.0, 0.0, 1.0, 1.0),
-//   glm::vec4(1.0, 1.0, 1.0, 1.0),
-//   glm::vec4(0.0, 1.0, 1.0, 1.0)
-// };
-
-// int tri_idx = 0;
-// glm::vec4 v_positions[num_vertices];
-// glm::vec4 v_colors[num_vertices];
-
-// // quad generates two triangles for each face and assigns colors to the vertices
-// void quad(int a, int b, int c, int d) {
-//     v_colors[tri_idx] = colors[a]; v_positions[tri_idx] = positions[a]; tri_idx++;
-//     v_colors[tri_idx] = colors[b]; v_positions[tri_idx] = positions[b]; tri_idx++;
-//     v_colors[tri_idx] = colors[c]; v_positions[tri_idx] = positions[c]; tri_idx++;
-//     v_colors[tri_idx] = colors[a]; v_positions[tri_idx] = positions[a]; tri_idx++;
-//     v_colors[tri_idx] = colors[c]; v_positions[tri_idx] = positions[c]; tri_idx++;
-//     v_colors[tri_idx] = colors[d]; v_positions[tri_idx] = positions[d]; tri_idx++;
-// }
-
-// // generate 12 triangles: 36 vertices and 36 colors
-// void colorcube(void) {
-//     quad(1, 0, 3, 2);
-//     quad(2, 3, 7, 6);
-//     quad(3, 0, 4, 7);
-//     quad(6, 5, 1, 2);
-//     quad(4, 5, 6, 7);
-//     quad(5, 4, 0, 1);
-// }
-
-//-----------------------------------------------------------------
-
-void initBuffersGL(std::vector<shape_t> shapes) {
+void initBuffersGL(std::vector<std::unique_ptr<shape_t>>& shapes) {
     
     // Load shaders and use the resulting shader program
     std::string vertex_shader_file("shaders/vshader.glsl");
@@ -127,10 +74,18 @@ void initBuffersGL(std::vector<shape_t> shapes) {
     
     uModelViewProjectMatrix = glGetUniformLocation(shaderProgram, "uModelViewProjectMatrix");
 
-    shapes.push_back(box_t(0, vPosition, vColor));
+    if (vPosition == -1 || vColor == -1 || uModelViewProjectMatrix == -1) {
+        std::cerr << "Error: Could not find shader attributes/uniforms" << std::endl;
+        glfwTerminate();
+        exit(-1);
+    }
+    // std::cout << "initBuffersGL: Adding box_t, shapes.size() = " << shapes.size() << std::endl;
+    shapes.push_back(std::make_unique<box_t>(0, vPosition, vColor));
+    // std::cout << "initBuffersGL: After adding, shapes.size() = " << shapes.size() << std::endl;
+    // shapes.push_back(box_t(0, vPosition, vColor));
 }
 
-void renderGL(std::vector<glm::mat4> matrixStack, std::vector<shape_t> shapes) {
+void renderGL(std::vector<glm::mat4> matrixStack, std::vector<std::unique_ptr<shape_t>>& shapes) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     matrixStack.clear();
@@ -144,10 +99,31 @@ void renderGL(std::vector<glm::mat4> matrixStack, std::vector<shape_t> shapes) {
     ortho_matrix = glm::ortho(-2.0, 2.0, -2.0, 2.0, -20.0, 20.0);
 
     matrixStack.push_back(ortho_matrix * view_matrix * rotation_matrix);
+    
+    glUseProgram(shaderProgram);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
-    for (const auto& shape : shapes) {
-        shape.draw(matrixStack, uModelViewProjectMatrix);
+    // Toggle culling and wireframe
+    if (enable_culling) {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    } else {
+        glDisable(GL_CULL_FACE);
     }
+    glPolygonMode(GL_FRONT_AND_BACK, solid ? GL_FILL : GL_LINE);
+
+    // for (const auto& shape : shapes) {
+    //     shape.draw(matrixStack, uModelViewProjectMatrix);
+    // }
+
+    // Draw shapes
+    for (const auto& shape : shapes) {
+        // std::cout << "Drawing shape with " << 36 << " vertices" << std::endl;
+        shape->draw(matrixStack, uModelViewProjectMatrix);
+    }
+
+    glFlush();
 }
 
 int main(int argc, char** argv) {
@@ -202,7 +178,7 @@ int main(int argc, char** argv) {
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-    std::vector<shape_t> shapes;
+    std::vector<std::unique_ptr<shape_t>> shapes;
     std::vector<glm::mat4> matrixStack;
 
     //Initialize GL state
