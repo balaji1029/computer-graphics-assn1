@@ -1,24 +1,50 @@
 #include "shape.hpp"
+#include "shape_util.hpp"
+#include <glm/gtc/matrix_transform.hpp>
 
-void face(std::vector<glm::vec4>& v_positions, std::vector<glm::vec4>& v_colors, int a, int b, int c, int d, const std::vector<glm::vec4>& positions, glm::vec4 color) {
-    v_colors.push_back(color); v_positions.push_back(positions[a]);
-    v_colors.push_back(color); v_positions.push_back(positions[b]);
-    v_colors.push_back(color); v_positions.push_back(positions[c]);
-    v_colors.push_back(color); v_positions.push_back(positions[a]);
-    v_colors.push_back(color); v_positions.push_back(positions[c]);
-    v_colors.push_back(color); v_positions.push_back(positions[d]);
+void cylinder_t::draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const {
+    std::unique_ptr<glm::mat4> ms_mult;
+
+    glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), static_cast<float>(xrot), glm::vec3(1.0f, 0.0f, 0.0f));
+    rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(yrot), glm::vec3(0.0f, 1.0f, 0.0f));
+    rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(zrot), glm::vec3(0.0f, 0.0f, 1.0f));
+    rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f, 0.0f, 1.0f));
+
+    glm::mat4 translation_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
+
+    glm::mat4 scale_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(xscale, yscale, zscale));
+
+    for (const auto& mat : matrixStack) {
+        if (!ms_mult) {
+            ms_mult = std::make_unique<glm::mat4>(mat);
+        } else {
+            *ms_mult = (*ms_mult) * mat;
+        }
+    }
+
+    *ms_mult = (*ms_mult) * translation_matrix * rotation_matrix * scale_matrix;
+
+    glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
+    glBindVertexArray (vao);
+    glDrawArrays(GL_TRIANGLES, 0, v_positions.size());
 }
 
-void triangle(std::vector<glm::vec4>& v_positions, std::vector<glm::vec4>& v_colors, int a, int b, int c, const std::vector<glm::vec4>& positions, glm::vec4 color) {
-    v_colors.push_back(color); v_positions.push_back(positions[a]);
-    v_colors.push_back(color); v_positions.push_back(positions[b]);
-    v_colors.push_back(color); v_positions.push_back(positions[c]);
-}
+void cylinder_t::set_color(const glm::vec4& new_color) {
+    color = new_color;
+    v_colors.resize(v_positions.size(), color);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferSubData(GL_ARRAY_BUFFER, v_positions.size() * sizeof(glm::vec4), v_colors.size() * sizeof(glm::vec4), v_colors.data());
+    std::cout << "Color set to (" << new_color.r << ", " << new_color.g << ", " << new_color.b << ", " << new_color.a << ")\n";
+}   
 
 cylinder_t::cylinder_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
     shapetype = BOX_SHAPE;
     centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
     color = DEFAULT_COLOR;
+
+    vPosition = vPosition;
+    vColor = vColor;
 
     // Define the 8 vertices of the box
     int num_vertices = (level + 1) * 10;

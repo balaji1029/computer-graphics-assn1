@@ -1,7 +1,7 @@
 #include "shape.hpp"
 #include "shape_util.hpp"
 
-void box_t::draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const {
+void cone_t::draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const {
     std::unique_ptr<glm::mat4> ms_mult;
 
     for (const auto& mat : matrixStack) {
@@ -17,7 +17,7 @@ void box_t::draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMat
     glDrawArrays(GL_TRIANGLES, 0, v_positions.size());
 }
 
-void box_t::set_color(const glm::vec4& new_color) {
+void cone_t::set_color(const glm::vec4& new_color) {
     color = new_color;
     v_colors.clear();
     for (size_t i = 0; i < v_positions.size(); ++i) {
@@ -28,7 +28,7 @@ void box_t::set_color(const glm::vec4& new_color) {
     glVertexAttribPointer(vColor, 4, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(v_positions.size() * sizeof(glm::vec4)));
 }
 
-box_t::box_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
+cone_t::cone_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
     shapetype = BOX_SHAPE;
     centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
     color = DEFAULT_COLOR;
@@ -37,23 +37,25 @@ box_t::box_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
     vColor = vColor;
 
     // Define the 8 vertices of the box
-    vertices = {
-        glm::vec4(-0.5, -0.5,  0.5, 1.0),
-        glm::vec4( 0.5, -0.5,  0.5, 1.0),
-        glm::vec4( 0.5,  0.5,  0.5, 1.0),
-        glm::vec4(-0.5,  0.5,  0.5, 1.0),
-        glm::vec4(-0.5, -0.5, -0.5, 1.0),
-        glm::vec4( 0.5, -0.5, -0.5, 1.0),
-        glm::vec4( 0.5,  0.5, -0.5, 1.0),
-        glm::vec4(-0.5,  0.5, -0.5, 1.0)
-    };
+    int num_vertices = (level + 1) * 10;
 
-    face(v_positions, v_colors, 0, 1, 2, 3, vertices, color); // Front face
-    face(v_positions, v_colors, 1, 5, 6, 2, vertices, color); // Right face
-    face(v_positions, v_colors, 5, 4, 7, 6, vertices, color); // Back face
-    face(v_positions, v_colors, 4, 0, 3, 7, vertices, color); // Left face
-    face(v_positions, v_colors, 3, 2, 6, 7, vertices, color); // Top face
-    face(v_positions, v_colors, 4, 5, 1, 0, vertices, color); // Bottom face
+    for (int i=0; i < num_vertices; ++i) {
+        double angle = (2 * M_PI * i) / num_vertices;
+        double x = 0.5 * cos(angle);
+        double y = 0.5 * sin(angle);
+        
+        vertices.push_back(glm::vec4(x, y, -0.5, 1.0)); // Bottom circle
+    }
+
+    // Top and bottom centers
+    vertices.push_back(glm::vec4(0.0, 0.0, 1.5, 1.0)); // Top center
+    vertices.push_back(glm::vec4(0.0, 0.0, -0.5, 1.0)); // Bottom center
+
+    for (int i = 0; i < num_vertices; ++i) {
+        int next = (i + 1) % num_vertices;
+        triangle(v_positions, v_colors, i, next, vertices.size() - 2, vertices, color); // Side face
+        triangle(v_positions, v_colors, i, next, vertices.size() - 1, vertices, color); // Bottom face
+    }
 
     // Ask GL for a vao
     glGenVertexArrays(1, &vao);

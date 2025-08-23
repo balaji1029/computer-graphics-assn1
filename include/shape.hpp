@@ -8,7 +8,7 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
-#define DEFAULT_COLOR glm::vec4(1.0, 0.0, 0.0, 1.0)
+#define DEFAULT_COLOR glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)
 
 enum shape_type_t {
     SPHERE_SHAPE, 
@@ -20,21 +20,25 @@ enum shape_type_t {
 class shape_t {
 protected:
     glm::vec4 centroid;
-    glm::vec4 color;
     std::vector<glm::vec4> vertices;
     shape_type_t shapetype;
     uint32_t level;
-
+    
     GLuint vao, vbo;
-
+    GLuint vPosition, vColor;
+    
     std::vector<glm::vec4> v_positions;
     std::vector<glm::vec4> v_colors;
     
 public:
-    shape_t(uint32_t level)
-    : centroid(0.0f), color(DEFAULT_COLOR), shapetype(BOX_SHAPE), level(level), vao(0), vbo(0) {};
+    glm::vec4 color;
+    GLfloat xrot = 0, yrot = 0, zrot = 0;
+    GLfloat xpos = 0, ypos = 0, zpos = 0;
+    GLfloat xscale = 1.0f, yscale = 1.0f, zscale = 1.0f;
+    shape_t(uint32_t level, GLuint vPosition = 0, GLuint vColor = 0) {};
     virtual ~shape_t() {};
-    virtual void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const {};
+    virtual void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const = 0;
+    virtual void set_color(const glm::vec4& new_color) { color = new_color; }
 };
 
 class sphere_t : public shape_t {
@@ -45,46 +49,20 @@ public:
 class cylinder_t : public shape_t {
 public:
     cylinder_t(uint32_t level = 0, GLuint vPosition = 0, GLuint vColor = 0);
-    void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const override {
-        //matrixStack multiply
-        std::unique_ptr<glm::mat4> ms_mult;
-
-        for (const auto& mat : matrixStack) {
-            if (!ms_mult) {
-                ms_mult = std::make_unique<glm::mat4>(mat);
-            } else {
-                *ms_mult = (*ms_mult) * mat;
-            }
-        }
-
-        glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
-        glBindVertexArray (vao);
-        glDrawArrays(GL_TRIANGLES, 0, v_positions.size());
-    }
+    void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const override;
+    void set_color(const glm::vec4& new_color) override;
 };
 
 class box_t : public shape_t {
 public:
     box_t(uint32_t level = 0, GLuint vPosition = 0, GLuint vColor = 0);
-    void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const override {
-        //matrixStack multiply
-        std::unique_ptr<glm::mat4> ms_mult;
-
-        for (const auto& mat : matrixStack) {
-            if (!ms_mult) {
-                ms_mult = std::make_unique<glm::mat4>(mat);
-            } else {
-                *ms_mult = (*ms_mult) * mat;
-            }
-        }
-
-        glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
-        glBindVertexArray (vao);
-        glDrawArrays(GL_TRIANGLES, 0, v_positions.size());
-    }
+    void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const override;
+    void set_color(const glm::vec4& new_color) override;
 };
 
 class cone_t : public shape_t {
 public:
-    cone_t(uint32_t level = 0);
+    cone_t(uint32_t level = 0, GLuint vPosition = 0, GLuint vColor = 0);
+    void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const override;
+    void set_color(const glm::vec4& new_color) override;
 };
