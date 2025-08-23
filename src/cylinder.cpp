@@ -8,7 +8,7 @@ void cylinder_t::draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelVi
     glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), static_cast<float>(xrot), glm::vec3(1.0f, 0.0f, 0.0f));
     rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(yrot), glm::vec3(0.0f, 1.0f, 0.0f));
     rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(zrot), glm::vec3(0.0f, 0.0f, 1.0f));
-    rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f, 0.0f, 1.0f));
+    // std::cout << xrot << " " << yrot << " " << zrot << std::endl;
 
     glm::mat4 translation_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
 
@@ -64,7 +64,7 @@ cylinder_t::cylinder_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_
 
     for (int i = 0; i < num_vertices; ++i) {
         int next = (i + 1) % num_vertices;
-        face(v_positions, v_colors, i * 2, next * 2, next * 2 + 1, i * 2 + 1, vertices, color); // Side face
+        face(v_positions, v_colors, i * 2, next * 2, next * 2 + 1, i * 2 + 1, vertices, color * 0.80f); // Side face
     }
 
     // Top face

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "shape.hpp"
+// #include "model.hpp"
 
 #include "gl_framework.hpp"
 #include "shader_util.hpp"
@@ -34,7 +35,6 @@ class WindowManager {
     GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
     // Rotation Parameters
     GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
-
     
 public:
     std::weak_ptr<shape_t> selected_shape;
