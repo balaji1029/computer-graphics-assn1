@@ -66,7 +66,7 @@ void WindowManager::initBuffersGL() {
     vColor = glGetAttribLocation(shaderProgram, "vColor");
     uModelViewProjectMatrix = glGetUniformLocation(shaderProgram, "uModelViewProjectMatrix");
 
-    shapes.push_back(std::make_shared<cone_t>(4, vPosition, vColor));
+    shapes.push_back(std::make_shared<sphere_t>(4, vPosition, vColor));
     selected_shape = shapes.back();
 }
 
