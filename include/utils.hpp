@@ -28,7 +28,7 @@ class WindowManager {
     glm::mat4 c_view_matrix;
     glm::mat4 c_ortho_matrix;
 
-    bool enable_culling = false;
+    bool enable_culling = true;
     bool enable_wireframe = false;
 
     // Translation Parameters
