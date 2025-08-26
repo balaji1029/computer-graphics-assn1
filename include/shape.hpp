@@ -38,8 +38,8 @@ public:
     GLfloat xscale = 1.0f, yscale = 1.0f, zscale = 1.0f;
     shape_t(uint32_t level, GLuint vPosition = 0, GLuint vColor = 0) {};
     virtual ~shape_t() {};
-    void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const;
-    void set_color(const glm::vec4& new_color);
+    virtual void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const;
+    virtual void set_color(const glm::vec4& new_color);
 };
 
 class sphere_t : public shape_t {
