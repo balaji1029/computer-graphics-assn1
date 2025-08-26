@@ -1,42 +1,5 @@
 #include "shape.hpp"
 #include "shape_util.hpp"
-#include <glm/gtc/matrix_transform.hpp>
-
-void sphere_t::draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const {
-    std::unique_ptr<glm::mat4> ms_mult;
-
-    glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), static_cast<float>(xrot), glm::vec3(1.0f, 0.0f, 0.0f));
-    rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(yrot), glm::vec3(0.0f, 1.0f, 0.0f));
-    rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(zrot), glm::vec3(0.0f, 0.0f, 1.0f));
-    // std::cout << xrot << " " << yrot << " " << zrot << std::endl;
-
-    glm::mat4 translation_matrix = glm::translate(glm::mat4(1.0f), glm::vec3(xpos, ypos, zpos));
-
-    glm::mat4 scale_matrix = glm::scale(glm::mat4(1.0f), glm::vec3(xscale, yscale, zscale));
-
-    for (const auto& mat : matrixStack) {
-        if (!ms_mult) {
-            ms_mult = std::make_unique<glm::mat4>(mat);
-        } else {
-            *ms_mult = (*ms_mult) * mat;
-        }
-    }
-
-    *ms_mult = (*ms_mult) * translation_matrix * rotation_matrix * scale_matrix;
-
-    glUniformMatrix4fv(uModelViewMatrix, 1, GL_FALSE, glm::value_ptr(*ms_mult));
-    glBindVertexArray (vao);
-    glDrawArrays(GL_TRIANGLES, 0, v_positions.size());
-}
-
-void sphere_t::set_color(const glm::vec4& new_color) {
-    color = new_color;
-    v_colors.resize(v_positions.size(), color);
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, v_positions.size() * sizeof(glm::vec4), v_colors.size() * sizeof(glm::vec4), v_colors.data());
-    std::cout << "Color set to (" << new_color.r << ", " << new_color.g << ", " << new_color.b << ", " << new_color.a << ")\n";
-}   
 
 sphere_t::sphere_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
     shapetype = SPHERE_SHAPE;
@@ -100,42 +63,7 @@ sphere_t::sphere_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(le
         triangle(v_positions, v_colors, topPole, curr, next, vertices, color);
     }
 
-
-    // int num_lines = 2*(level + 2);
-    // vertices.push_back(glm::vec4(0.0, 0.0, -1.0, 1.0)); // Bottom center
-
-    // for(int lat = -num_lines; lat <= num_lines; ++lat) {
-    //     for(int lng = -num_lines; lng <= num_lines; ++lng) {
-    //         double theta = 2*M_PI*lat/(2*num_lines+1);
-    //         double phi = M_PI*lng/(2*num_lines+1);
-    //         vertices.push_back(glm::vec4(cos(phi)*cos(theta), cos(phi)*sin(theta), sin(phi), 1.0));
-    //     }
-    // }
-
-    // vertices.push_back(glm::vec4(0.0, 0.0, 1.0, 1.0)); // Top center
-
-    // // Bottom of the sphere
-    // for(int i=1; i<=2*num_lines; ++i) {
-    //     triangle(v_positions, v_colors, 0, i+1, i, vertices, color);
-    // }
-    // triangle(v_positions, v_colors, 0, 2*num_lines+1, 1, vertices, color);
-
-    // // Top of the sphere
-    // for(int i=vertices.size()-2*num_lines-2; i<=vertices.size()-3; ++i) {
-    //     triangle(v_positions, v_colors, vertices.size()-1, i, i+1, vertices, color);
-    // }
-    // triangle(v_positions, v_colors, vertices.size()-1, vertices.size()-2, vertices.size()-2*num_lines-2, vertices, color);
-
-    // // Rest of the sphere
-    // int count = 1;
-    // for(int lat=-num_lines; lat<num_lines; ++lat) {
-    //     for(int lng=-num_lines; lng<num_lines; ++lng) {
-    //         face(v_positions, v_colors, count, count+1, count+2*num_lines+2, count+2*num_lines+1, vertices, color);
-    //         ++count;
-    //     }
-    //     face(v_positions, v_colors, count, count-2*num_lines, count+1, count+2*num_lines+1, vertices, color);
-    //     ++count;
-    // }
+    color_factors.assign(v_positions.size(), 1.0f);
 
     // Ask GL for a vao
     glGenVertexArrays(1, &vao);

@@ -30,22 +30,16 @@ cylinder_t::cylinder_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_
         face(v_positions, v_colors, next * 2 + 1, i * 2 + 1, i * 2, next * 2, vertices, color * 0.80f); // Side face
     }
 
-    color_factors = std::vector<float>(num_vertices * 4, 0.80f);
+    color_factors = std::vector<float>(num_vertices * 6, 0.80f);
 
     // Top face
     for (int i = 0; i < num_vertices; ++i) {
         int next = (i + 1) % num_vertices;
         triangle(v_positions, v_colors, next * 2, i * 2, vertices.size() - 2, vertices, color);
-    }
-
-    
-    // Bottom face
-    for (int i = 0; i < num_vertices; ++i) {
-        int next = (i + 1) % num_vertices;
         triangle(v_positions, v_colors, i * 2 + 1, next * 2 + 1, vertices.size() - 1, vertices, color);
     }
     
-    std::vector<float> top_bottom_factors(num_vertices * 3, 1.0f);
+    std::vector<float> top_bottom_factors(num_vertices * 6, 1.0f);
     color_factors.insert(color_factors.end(), top_bottom_factors.begin(), top_bottom_factors.end());
 
     // Ask GL for a vao

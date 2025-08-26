@@ -24,7 +24,7 @@ cone_t::cone_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level)
     }
 
     // Top and bottom centers
-    vertices.push_back(glm::vec4(0.0, 1.5, 0.0, 1.0)); // Top center
+    vertices.push_back(glm::vec4(0.0, 0.5, 0.0, 1.0)); // Top center
     vertices.push_back(glm::vec4(0.0, -0.5, 0.0, 1.0)); // Bottom center
 
     for (int i = 0; i < num_vertices; ++i) {

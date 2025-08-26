@@ -29,7 +29,7 @@ class WindowManager {
     glm::mat4 c_ortho_matrix;
 
     bool enable_culling = true;
-    bool enable_wireframe = false;
+    bool enable_wireframe = true;
 
     // Translation Parameters
     GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;

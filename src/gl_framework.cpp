@@ -58,24 +58,15 @@ namespace csX75 {
 				if (current_mode != ROTATE) {
 					current_mode = ROTATE;
 				}
-				else {
-					current_mode = NONE;
-				}
 				break;
 			case GLFW_KEY_T:
 				if (current_mode != TRANSLATE) {
 					current_mode = TRANSLATE;
 				}
-				else {
-					current_mode = NONE;
-				}
 				break;
 			case GLFW_KEY_G:
 				if (current_mode != SCALE) {
 					current_mode = SCALE;
-				}
-				else {
-					current_mode = NONE;
 				}
 				break;
 			case GLFW_KEY_C:
