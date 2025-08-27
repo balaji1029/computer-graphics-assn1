@@ -5,29 +5,30 @@ sphere_t::sphere_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(le
     shapetype = SPHERE_SHAPE;
     centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
     color = DEFAULT_COLOR;
+    float radius = 0.5f;
 
     vPosition = vPosition;
     vColor = vColor;
     int num_lat = 5 * (level + 2);  // latitude divisions
     int num_lng = 5 * (level + 2);  // longitude divisions
 
-        // Bottom pole
-    vertices.push_back(glm::vec4(0.0, 0.0, -1.0, 1.0));
+    // Bottom pole
+    vertices.push_back(glm::vec4(0.0, 0.0, -radius, 1.0));
 
     // Intermediate rings
     for (int lat = 1; lat < num_lat; ++lat) {
         double phi = -M_PI/2.0 + M_PI * lat / num_lat; // -90° to +90°
         for (int lng = 0; lng < num_lng; ++lng) {
             double theta = 2.0 * M_PI * lng / num_lng; // 0° to 360°
-            double x = cos(phi) * cos(theta);
-            double y = cos(phi) * sin(theta);
-            double z = sin(phi);
+            double x = radius * cos(phi) * cos(theta);
+            double y = radius * cos(phi) * sin(theta);
+            double z = radius * sin(phi);
             vertices.push_back(glm::vec4(x, y, z, 1.0));
         }
     }
 
     // Top pole
-    vertices.push_back(glm::vec4(0.0, 0.0, 1.0, 1.0));
+    vertices.push_back(glm::vec4(0.0, 0.0, radius, 1.0));
 
     int bottomPole = 0;
     int topPole = (int)vertices.size() - 1;
@@ -49,9 +50,7 @@ sphere_t::sphere_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(le
             int above    = 1 + (lat + 1) * num_lng + lng;
             int aboveNext= 1 + (lat + 1) * num_lng + (lng + 1) % num_lng;
 
-            // Two triangles per quad
-            triangle(v_positions, v_colors, curr, next, above, vertices, color);
-            triangle(v_positions, v_colors, next, aboveNext, above, vertices, color);
+            face(v_positions, v_colors, curr, next, aboveNext, above, vertices, color);
         }
     }
 

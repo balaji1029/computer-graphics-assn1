@@ -18,7 +18,7 @@ WindowManager::WindowManager(int width, int height, const char* title) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     //! Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(512, 512, "Assignment 1", NULL, NULL);
+    window = glfwCreateWindow(1024, 1024, "Assignment 1", NULL, NULL);
     if (!window) {
         glfwTerminate();
         exit(EXIT_FAILURE);
