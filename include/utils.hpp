@@ -13,14 +13,12 @@
 
 class WindowManager {
     GLFWwindow* window;
-    std::vector<std::shared_ptr<shape_t>> shapes;
     std::vector<glm::mat4> matrixStack;
-
+    
     GLuint shaderProgram;
     GLuint vbo, vao;
 
-    GLuint vPosition, vColor, uModelViewProjectMatrix;
-
+    
     std::string vertex_shader_file = "shaders/vshader.glsl";
     std::string fragment_shader_file = "shaders/fshader.glsl";
 
@@ -28,15 +26,18 @@ class WindowManager {
     glm::mat4 c_view_matrix;
     glm::mat4 c_ortho_matrix;
 
-    bool enable_culling = true;
-    bool enable_wireframe = true;
+    bool enable_culling;
+    bool enable_wireframe;
 
+    
+    public:
     // Translation Parameters
     GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
     // Rotation Parameters
-    GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
     
-public:
+    GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
+    GLuint vPosition, vColor, uModelViewProjectMatrix;
+    std::vector<std::shared_ptr<shape_t>> shapes;
     std::weak_ptr<shape_t> selected_shape;
     WindowManager(int width, int height, const char* title);
     void initBuffersGL();

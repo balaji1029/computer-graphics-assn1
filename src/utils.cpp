@@ -50,6 +50,10 @@ WindowManager::WindowManager(int width, int height, const char* title) {
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
+    enable_culling = true;
+    enable_wireframe = false;
+
+
     //Initialize GL state
     csX75::initGL();
 }
@@ -66,8 +70,8 @@ void WindowManager::initBuffersGL() {
     vColor = glGetAttribLocation(shaderProgram, "vColor");
     uModelViewProjectMatrix = glGetUniformLocation(shaderProgram, "uModelViewProjectMatrix");
 
-    shapes.push_back(std::make_shared<sphere_t>(4, vPosition, vColor));
-    selected_shape = shapes.back();
+    // shapes.push_back(std::make_shared<sphere_t>(4, vPosition, vColor));
+    // selected_shape = shapes.back();
 }
 
 void WindowManager::renderGL() {

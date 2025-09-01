@@ -1,5 +1,7 @@
 #include "gl_framework.hpp"
 #include "utils.hpp"
+#include "shape.hpp"
+
 #include <glm/glm.hpp>
 
 // extern GLfloat xrot, yrot, zrot;
@@ -135,6 +137,18 @@ namespace csX75 {
 							break;
 						}
 					}
+				} else if (current_mode == NONE) {
+					switch(current_axis) {
+					case X:
+						windowManager.xrot += M_PI / 10;
+						break;
+					case Y:
+						windowManager.yrot += M_PI / 10;
+						break;
+					case Z:
+						windowManager.zrot += M_PI / 10;
+						break;
+					}
 				}
 				break;
 			case GLFW_KEY_DOWN:
@@ -187,7 +201,48 @@ namespace csX75 {
 							break;
 						}
 					}
+				} else if (current_mode == NONE) {
+					switch(current_axis) {
+					case X:
+						windowManager.xrot -= M_PI / 10;
+						break;
+					case Y:
+						windowManager.yrot -= M_PI / 10;
+						break;
+					case Z:
+						windowManager.zrot -= M_PI / 10;
+						break;
+					}
 				}
+				break;
+			case GLFW_KEY_1:
+				windowManager.shapes.push_back(std::make_shared<sphere_t>(4, windowManager.vPosition, windowManager.vColor));
+				windowManager.selected_shape = windowManager.shapes.back();
+				break;
+			case GLFW_KEY_2:
+				windowManager.shapes.push_back(std::make_shared<cylinder_t>(4, windowManager.vPosition, windowManager.vColor));
+				windowManager.selected_shape = windowManager.shapes.back();
+				break;
+			case GLFW_KEY_3:
+				windowManager.shapes.push_back(std::make_shared<box_t>(4, windowManager.vPosition, windowManager.vColor));
+				windowManager.selected_shape = windowManager.shapes.back();
+				break;
+			case GLFW_KEY_4:
+				windowManager.shapes.push_back(std::make_shared<cone_t>(4, windowManager.vPosition, windowManager.vColor));
+				windowManager.selected_shape = windowManager.shapes.back();
+				break;
+			case GLFW_KEY_5:
+				if (windowManager.shapes.size() > 0) {
+					windowManager.shapes.pop_back();
+					if (windowManager.shapes.size() > 0) {
+						windowManager.selected_shape = windowManager.shapes.back();
+					} else {
+						windowManager.selected_shape.reset();
+					}
+				}
+				break;
+			case GLFW_KEY_Q:
+				current_mode = NONE;
 				break;
 			default:
 				break;
