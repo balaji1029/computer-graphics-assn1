@@ -9,10 +9,6 @@ box_t::box_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
     vPosition = vPosition;
     vColor = vColor;
 
-    xrot = yrot = zrot = 0.0f;
-    xpos = ypos = zpos = 0.0f;
-    xscale = yscale = zscale = 1.0f;
-
     // Define the 8 vertices of the box
     vertices = {
         glm::vec4(-0.5, -0.5,  0.5, 1.0),

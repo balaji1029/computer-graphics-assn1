@@ -33,9 +33,6 @@ protected:
     std::vector<glm::vec4> v_colors;
     
 public:
-    GLfloat xrot = 0, yrot = 0, zrot = 0;
-    GLfloat xpos = 0, ypos = 0, zpos = 0;
-    GLfloat xscale = 1.0f, yscale = 1.0f, zscale = 1.0f;
     shape_t(uint32_t level, GLuint vPosition = 0, GLuint vColor = 0) {};
     virtual ~shape_t() {};
     void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const;

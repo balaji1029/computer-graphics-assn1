@@ -1,6 +1,5 @@
 #include "gl_framework.hpp"
 #include "utils.hpp"
-#include "shape.hpp"
 
 #include <glm/glm.hpp>
 
@@ -72,13 +71,13 @@ namespace csX75 {
 				}
 				break;
 			case GLFW_KEY_C:
-				if (windowManager.selected_shape.lock()) {
+				if (windowManager.selected_node.lock()) {
 					float r, g, b;
 					std::cout << "Enter RGB values between 0 and 1 seperated with spaces: ";
 					std::cin >> r >> g >> b;
 					std::cout << "Color set to (" << r << ", " << g << ", " << b << ")\n";
-					auto shape = windowManager.selected_shape.lock();
-					shape->set_color(glm::vec4(r, g, b, 1.0f));
+					auto node = windowManager.selected_node.lock();
+					node->set_color(glm::vec4(r, g, b, 1.0f));
 				}
 				break;
 			case GLFW_KEY_X:
@@ -93,47 +92,47 @@ namespace csX75 {
 			case GLFW_KEY_UP:
 			case GLFW_KEY_EQUAL:
 				if (current_mode == ROTATE) {
-					if (windowManager.selected_shape.lock()) {
-						auto shape = windowManager.selected_shape.lock();
+					if (windowManager.selected_node.lock()) {
+						auto node = windowManager.selected_node.lock();
 						switch (current_axis) {
 						case X:
-							shape->xrot += M_PI / 10;
+							node->xrot += M_PI / 10;
 							break;
 						case Y:
-							shape->yrot += M_PI / 10;
+							node->yrot += M_PI / 10;
 							break;
 						case Z:
-							shape->zrot += M_PI / 10;
+							node->zrot += M_PI / 10;
 							break;
 						}
 					}
 				} else if (current_mode == SCALE) {
-					if (windowManager.selected_shape.lock()) {
-						auto shape = windowManager.selected_shape.lock();
+					if (windowManager.selected_node.lock()) {
+						auto node = windowManager.selected_node.lock();
 						switch (current_axis) {
 						case X:
-							shape->xscale += 0.1f;
+							node->xscale += 0.1f;
 							break;
 						case Y:
-							shape->yscale += 0.1f;
+							node->yscale += 0.1f;
 							break;
 						case Z:
-							shape->zscale += 0.1f;
+							node->zscale += 0.1f;
 							break;
 						}
 					}
 				} else if (current_mode == TRANSLATE) {
-					if (windowManager.selected_shape.lock()) {
-						auto shape = windowManager.selected_shape.lock();
+					if (windowManager.selected_node.lock()) {
+						auto node = windowManager.selected_node.lock();
 						switch (current_axis) {
 						case X:
-							shape->xpos += 0.1f;
+							node->xpos += 0.1f;
 							break;
 						case Y:
-							shape->ypos += 0.1f;
+							node->ypos += 0.1f;
 							break;
 						case Z:
-							shape->zpos += 0.1f;
+							node->zpos += 0.1f;
 							break;
 						}
 					}
@@ -154,50 +153,50 @@ namespace csX75 {
 			case GLFW_KEY_DOWN:
 			case GLFW_KEY_MINUS:
 				if (current_mode == ROTATE) {
-					if (windowManager.selected_shape.lock()) {
-						auto shape = windowManager.selected_shape.lock();
+					if (windowManager.selected_node.lock()) {
+						auto node = windowManager.selected_node.lock();
 						switch (current_axis) {
 						case X:
-							shape->xrot -= M_PI / 10;
+							node->xrot -= M_PI / 10;
 							break;
 						case Y:
-							shape->yrot -= M_PI / 10;
+							node->yrot -= M_PI / 10;
 							break;
 						case Z:
-							shape->zrot -= M_PI / 10;
+							node->zrot -= M_PI / 10;
 							break;
 						}
 					}
 				} else if (current_mode == SCALE) {
-					if (windowManager.selected_shape.lock()) {
-						auto shape = windowManager.selected_shape.lock();
+					if (windowManager.selected_node.lock()) {
+						auto node = windowManager.selected_node.lock();
 						switch (current_axis) {
 						case X:
-							shape->xscale -= 0.1f;
-							if (shape->xscale < 0.1f) shape->xscale = 0.1f;
+							node->xscale -= 0.1f;
+							if (node->xscale < 0.1f) node->xscale = 0.1f;
 							break;
 						case Y:
-							shape->yscale -= 0.1f;
-							if (shape->yscale < 0.1f) shape->yscale = 0.1f;
+							node->yscale -= 0.1f;
+							if (node->yscale < 0.1f) node->yscale = 0.1f;
 							break;
 						case Z:
-							shape->zscale -= 0.1f;
-							if (shape->zscale < 0.1f) shape->zscale = 0.1f;
+							node->zscale -= 0.1f;
+							if (node->zscale < 0.1f) node->zscale = 0.1f;
 							break;
 						}
 					}
 				} else if (current_mode == TRANSLATE) {
-					if (windowManager.selected_shape.lock()) {
-						auto shape = windowManager.selected_shape.lock();
+					if (windowManager.selected_node.lock()) {
+						auto node = windowManager.selected_node.lock();
 						switch (current_axis) {
 						case X:
-							shape->xpos -= 0.1f;
+							node->xpos -= 0.1f;
 							break;
 						case Y:
-							shape->ypos -= 0.1f;
+							node->ypos -= 0.1f;
 							break;
 						case Z:
-							shape->zpos -= 0.1f;
+							node->zpos -= 0.1f;
 							break;
 						}
 					}
@@ -216,28 +215,36 @@ namespace csX75 {
 				}
 				break;
 			case GLFW_KEY_1:
-				windowManager.shapes.push_back(std::make_shared<sphere_t>(4, windowManager.vPosition, windowManager.vColor));
-				windowManager.selected_shape = windowManager.shapes.back();
+				windowManager.addNode(shape_type_t::SPHERE_SHAPE, 4);
 				break;
 			case GLFW_KEY_2:
-				windowManager.shapes.push_back(std::make_shared<cylinder_t>(4, windowManager.vPosition, windowManager.vColor));
-				windowManager.selected_shape = windowManager.shapes.back();
+				windowManager.addNode(shape_type_t::CYLINDER_SHAPE, 4);
 				break;
 			case GLFW_KEY_3:
-				windowManager.shapes.push_back(std::make_shared<box_t>(4, windowManager.vPosition, windowManager.vColor));
-				windowManager.selected_shape = windowManager.shapes.back();
+				windowManager.addNode(shape_type_t::BOX_SHAPE, 4);
 				break;
 			case GLFW_KEY_4:
-				windowManager.shapes.push_back(std::make_shared<cone_t>(4, windowManager.vPosition, windowManager.vColor));
-				windowManager.selected_shape = windowManager.shapes.back();
+				windowManager.addNode(shape_type_t::CONE_SHAPE, 4);
 				break;
 			case GLFW_KEY_5:
-				if (windowManager.shapes.size() > 0) {
-					windowManager.shapes.pop_back();
-					if (windowManager.shapes.size() > 0) {
-						windowManager.selected_shape = windowManager.shapes.back();
-					} else {
-						windowManager.selected_shape.reset();
+				{
+					std::shared_ptr<node_t> deleting_child = windowManager.selected_node.lock();
+					if (deleting_child) {
+						auto parent = deleting_child->parent.lock();
+						if (parent) {
+							// Remove from parent's children
+							for (auto it = parent->children.begin(); it != parent->children.end(); ++it) {
+								if (it->get() == deleting_child.get()) {
+									parent->children.erase(it);
+									break;
+								}
+							}
+							windowManager.selected_node = parent;
+						} else {
+							// Deleting root node
+							windowManager.root_node = nullptr;
+							windowManager.selected_node.reset();
+						}
 					}
 				}
 				break;
