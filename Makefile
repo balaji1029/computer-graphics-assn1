@@ -5,7 +5,6 @@ GLEWLIB= -lGLEW
 GLFWLIB = -lglfw
 LIBS=$(OPENGLLIB) $(GLEWLIB) $(GLFWLIB)
 LDFLAGS=-L/usr/local/lib 
-CPPFLAGS=-I/usr/local/include -O3
 
 BINDIR=bin
 BIN=$(BINDIR)/main

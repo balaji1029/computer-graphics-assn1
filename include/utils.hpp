@@ -36,9 +36,9 @@ class WindowManager {
     // Rotation Parameters
     GLfloat xrot = 0.0, yrot = 0.0, zrot = 0.0;
     GLuint vPosition, vColor, uModelViewProjectMatrix;
-    // std::vector<std::shared_ptr<node_t>> nodes;
-    std::weak_ptr<node_t> selected_node;
-    std::shared_ptr<node_t> root_node;
+
+    std::shared_ptr<model_t> model;
+
     WindowManager(int width, int height, const char* title);
     void addNode(shape_type_t type, uint32_t level);
     void initBuffersGL();

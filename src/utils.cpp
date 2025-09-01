@@ -72,22 +72,11 @@ void WindowManager::initBuffersGL() {
 
     // shapes.push_back(std::make_shared<sphere_t>(4, vPosition, vColor));
     // selected_shape = shapes.back();
-    root_node = nullptr;
+    model = std::make_shared<model_t>(vPosition, vColor);
 }
 
 void WindowManager::addNode(shape_type_t type, uint32_t level) {
-    if (root_node) {
-        // std::cout << "yo" << std::endl;
-        std::shared_ptr<node_t> new_node = std::make_shared<node_t>(selected_node, type, level, vPosition, vColor);
-        auto parent_node = selected_node.lock();
-        parent_node->add_child(new_node);
-        selected_node = new_node;
-    }
-    else {
-        std::cout << "yo" << std::endl;
-        root_node = std::make_shared<node_t>(std::weak_ptr<node_t>{}, type, level, vPosition, vColor);
-        selected_node = root_node;
-    }
+    model->addNode(type, level);
 }
 
 void WindowManager::renderGL() {
@@ -123,8 +112,8 @@ void WindowManager::renderGL() {
     else
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    if (root_node) {
-        root_node->draw(matrixStack, uModelViewProjectMatrix);
+    if (model) {
+        model->draw(matrixStack, uModelViewProjectMatrix);
     }
     glFlush();
 }

@@ -18,8 +18,9 @@ enum shape_type_t {
 };
 
 class shape_t {
-protected:
+public:
     glm::vec4 centroid;
+
     std::vector<glm::vec4> vertices;
     shape_type_t shapetype;
     uint32_t level;
@@ -32,9 +33,8 @@ protected:
     std::vector<glm::vec4> v_positions;
     std::vector<glm::vec4> v_colors;
     
-public:
     shape_t(uint32_t level, GLuint vPosition = 0, GLuint vColor = 0) {};
-    virtual ~shape_t() {};
+    ~shape_t();
     void draw(const std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const;
     void set_color(const glm::vec4& new_color);
 };

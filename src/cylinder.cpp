@@ -5,6 +5,7 @@ cylinder_t::cylinder_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_
     shapetype = BOX_SHAPE;
     centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
     color = DEFAULT_COLOR;
+    this->level = level;
 
     this->vPosition = vPosition;
     this->vColor = vColor;

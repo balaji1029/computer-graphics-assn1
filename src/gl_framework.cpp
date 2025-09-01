@@ -71,15 +71,49 @@ namespace csX75 {
 				}
 				break;
 			case GLFW_KEY_C:
-				if (windowManager.selected_node.lock()) {
+				if (windowManager.model->selected_node.lock()) {
 					float r, g, b;
 					std::cout << "Enter RGB values between 0 and 1 seperated with spaces: ";
 					std::cin >> r >> g >> b;
 					std::cout << "Color set to (" << r << ", " << g << ", " << b << ")\n";
-					auto node = windowManager.selected_node.lock();
+					auto node = windowManager.model->selected_node.lock();
 					node->set_color(glm::vec4(r, g, b, 1.0f));
 				}
 				break;
+			case GLFW_KEY_S:
+				if (!windowManager.model) {
+					std::cerr << "No model to serialize\n";
+				} else {
+					std::string filename;
+					std::cout << "Enter filename to serialize to: ";
+					std::cin >> filename;
+					std::ofstream ofs(filename);
+					if (!ofs) {
+						std::cerr << "Error opening file " << filename << " for writing\n";
+					} else {
+						ofs << *(windowManager.model);
+						ofs.close();
+						std::cout << "Model serialized to " << filename << "\n";
+					}
+				}
+				break;
+			case GLFW_KEY_L:
+				{	
+					std::string filename;
+					std::cout << "Enter filename to load from: ";
+					std::cin >> filename;
+				
+					std::ifstream ifs(filename);
+					if (!ifs) {
+						std::cerr << "Error opening file " << filename << " for reading\n";
+					} else {
+						windowManager.model = std::make_shared<model_t>(windowManager.vPosition, windowManager.vColor);
+						ifs >> *(windowManager.model);
+						ifs.close();
+						windowManager.model->selected_node = std::weak_ptr<node_t>{};
+						std::cout << "Model loaded from " << filename << "\n";
+					}
+				}
 			case GLFW_KEY_X:
 				current_axis = X;
 				break;
@@ -92,8 +126,8 @@ namespace csX75 {
 			case GLFW_KEY_UP:
 			case GLFW_KEY_EQUAL:
 				if (current_mode == ROTATE) {
-					if (windowManager.selected_node.lock()) {
-						auto node = windowManager.selected_node.lock();
+					if (windowManager.model->selected_node.lock()) {
+						auto node = windowManager.model->selected_node.lock();
 						switch (current_axis) {
 						case X:
 							node->xrot += M_PI / 10;
@@ -107,8 +141,8 @@ namespace csX75 {
 						}
 					}
 				} else if (current_mode == SCALE) {
-					if (windowManager.selected_node.lock()) {
-						auto node = windowManager.selected_node.lock();
+					if (windowManager.model->selected_node.lock()) {
+						auto node = windowManager.model->selected_node.lock();
 						switch (current_axis) {
 						case X:
 							node->xscale += 0.1f;
@@ -122,8 +156,8 @@ namespace csX75 {
 						}
 					}
 				} else if (current_mode == TRANSLATE) {
-					if (windowManager.selected_node.lock()) {
-						auto node = windowManager.selected_node.lock();
+					if (windowManager.model->selected_node.lock()) {
+						auto node = windowManager.model->selected_node.lock();
 						switch (current_axis) {
 						case X:
 							node->xpos += 0.1f;
@@ -153,8 +187,8 @@ namespace csX75 {
 			case GLFW_KEY_DOWN:
 			case GLFW_KEY_MINUS:
 				if (current_mode == ROTATE) {
-					if (windowManager.selected_node.lock()) {
-						auto node = windowManager.selected_node.lock();
+					if (windowManager.model->selected_node.lock()) {
+						auto node = windowManager.model->selected_node.lock();
 						switch (current_axis) {
 						case X:
 							node->xrot -= M_PI / 10;
@@ -168,8 +202,8 @@ namespace csX75 {
 						}
 					}
 				} else if (current_mode == SCALE) {
-					if (windowManager.selected_node.lock()) {
-						auto node = windowManager.selected_node.lock();
+					if (windowManager.model->selected_node.lock()) {
+						auto node = windowManager.model->selected_node.lock();
 						switch (current_axis) {
 						case X:
 							node->xscale -= 0.1f;
@@ -186,8 +220,8 @@ namespace csX75 {
 						}
 					}
 				} else if (current_mode == TRANSLATE) {
-					if (windowManager.selected_node.lock()) {
-						auto node = windowManager.selected_node.lock();
+					if (windowManager.model->selected_node.lock()) {
+						auto node = windowManager.model->selected_node.lock();
 						switch (current_axis) {
 						case X:
 							node->xpos -= 0.1f;
@@ -227,26 +261,7 @@ namespace csX75 {
 				windowManager.addNode(shape_type_t::CONE_SHAPE, 4);
 				break;
 			case GLFW_KEY_5:
-				{
-					std::shared_ptr<node_t> deleting_child = windowManager.selected_node.lock();
-					if (deleting_child) {
-						auto parent = deleting_child->parent.lock();
-						if (parent) {
-							// Remove from parent's children
-							for (auto it = parent->children.begin(); it != parent->children.end(); ++it) {
-								if (it->get() == deleting_child.get()) {
-									parent->children.erase(it);
-									break;
-								}
-							}
-							windowManager.selected_node = parent;
-						} else {
-							// Deleting root node
-							windowManager.root_node = nullptr;
-							windowManager.selected_node.reset();
-						}
-					}
-				}
+				windowManager.model->removeSelectedNode();
 				break;
 			case GLFW_KEY_Q:
 				current_mode = NONE;

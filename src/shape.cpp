@@ -27,3 +27,8 @@ void shape_t::set_color(const glm::vec4& new_color) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferSubData(GL_ARRAY_BUFFER, v_positions.size() * sizeof(glm::vec4), v_colors.size() * sizeof(glm::vec4), v_colors.data());
 }
+
+shape_t::~shape_t() {
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
+}
