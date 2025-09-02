@@ -74,7 +74,7 @@ std::shared_ptr<model_t> read_model(std::istream& is, GLuint vPosition, GLuint v
     auto model = std::make_shared<model_t>(vPosition, vColor);
     model->root_node = nodes[0];
     model->node_count = node_count;
-    model->selected_node = model->root_node;
+    model->selected_node = nodes[node_count - 1];
     return model;
 }
 

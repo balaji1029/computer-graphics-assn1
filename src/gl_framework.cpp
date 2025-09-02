@@ -87,6 +87,7 @@ namespace csX75 {
 					std::string filename;
 					std::cout << "Enter filename to serialize to: ";
 					std::cin >> filename;
+					filename = "models/" + filename;
 					std::ofstream ofs(filename);
 					if (!ofs) {
 						std::cerr << "Error opening file " << filename << " for writing\n";
@@ -102,6 +103,7 @@ namespace csX75 {
 					std::string filename;
 					std::cout << "Enter filename to load from: ";
 					std::cin >> filename;
+					filename = "models/" + filename;
 				
 					std::ifstream ifs(filename);
 					if (!ifs) {
@@ -110,7 +112,6 @@ namespace csX75 {
 						windowManager.model = std::make_shared<model_t>(windowManager.vPosition, windowManager.vColor);
 						ifs >> *(windowManager.model);
 						ifs.close();
-						windowManager.model->selected_node = std::weak_ptr<node_t>{};
 						std::cout << "Model loaded from " << filename << "\n";
 					}
 				}
