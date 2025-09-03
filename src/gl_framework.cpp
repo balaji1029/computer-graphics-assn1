@@ -1,5 +1,5 @@
 #include "gl_framework.hpp"
-#include "utils.hpp"
+#include "window.hpp"
 
 #include <glm/glm.hpp>
 
@@ -171,7 +171,7 @@ namespace csX75 {
 							break;
 						}
 					}
-				} else if (current_mode == NONE) {
+				} else if (current_mode == NONE) {	
 					switch(current_axis) {
 					case X:
 						windowManager.xrot += M_PI / 10;

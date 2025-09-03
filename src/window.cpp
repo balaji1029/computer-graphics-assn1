@@ -1,4 +1,4 @@
-#include "utils.hpp"
+#include "window.hpp"
 
 WindowManager::WindowManager(int width, int height, const char* title) {
 
