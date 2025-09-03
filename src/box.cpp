@@ -12,14 +12,14 @@ box_t::box_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
 
     // Define the 8 vertices of the box
     vertices = {
-        glm::vec4(-0.5, -0.5,  0.5, 1.0),
-        glm::vec4( 0.5, -0.5,  0.5, 1.0),
-        glm::vec4( 0.5,  0.5,  0.5, 1.0),
-        glm::vec4(-0.5,  0.5,  0.5, 1.0),
-        glm::vec4(-0.5, -0.5, -0.5, 1.0),
-        glm::vec4( 0.5, -0.5, -0.5, 1.0),
-        glm::vec4( 0.5,  0.5, -0.5, 1.0),
-        glm::vec4(-0.5,  0.5, -0.5, 1.0)
+        glm::vec4(-0.25, -0.25,  0.25, 1.0),
+        glm::vec4( 0.25, -0.25,  0.25, 1.0),
+        glm::vec4( 0.25,  0.25,  0.25, 1.0),
+        glm::vec4(-0.25,  0.25,  0.25, 1.0),
+        glm::vec4(-0.25, -0.25, -0.25, 1.0),
+        glm::vec4( 0.25, -0.25, -0.25, 1.0),
+        glm::vec4( 0.25,  0.25, -0.25, 1.0),
+        glm::vec4(-0.25,  0.25, -0.25, 1.0)
     };
 
     face(v_positions, v_colors, 0, 1, 2, 3, vertices, color); // Front face

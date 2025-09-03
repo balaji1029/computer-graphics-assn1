@@ -5,7 +5,7 @@ sphere_t::sphere_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(le
     shapetype = SPHERE_SHAPE;
     centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
     color = DEFAULT_COLOR;
-    float radius = 0.5f;
+    float radius = 0.25f;
     this->level = level;
 
     vPosition = vPosition;

@@ -15,16 +15,16 @@ cylinder_t::cylinder_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_
 
     for (int i = 0; i < num_vertices; ++i) {
         double angle = (2 * M_PI * i) / num_vertices;
-        double x = 0.5 * cos(angle);
-        double y = 0.5 * sin(angle);
+        double x = 0.25 * cos(angle);
+        double y = 0.25 * sin(angle);
 
-        vertices.push_back(glm::vec4(x, y, 0.5, 1.0)); // Top circle
-        vertices.push_back(glm::vec4(x, y, -0.5, 1.0)); // Bottom circle
+        vertices.push_back(glm::vec4(x, y, 0.25, 1.0)); // Top circle
+        vertices.push_back(glm::vec4(x, y, -0.25, 1.0)); // Bottom circle
     }
 
     // Top and bottom centers
-    vertices.push_back(glm::vec4(0.0, 0.0, 0.5, 1.0)); // Top center
-    vertices.push_back(glm::vec4(0.0, 0.0, -0.5, 1.0)); // Bottom center
+    vertices.push_back(glm::vec4(0.0, 0.0, 0.25, 1.0)); // Top center
+    vertices.push_back(glm::vec4(0.0, 0.0, -0.25, 1.0)); // Bottom center
 
     for (int i = 0; i < num_vertices; ++i) {
         int next = (i + 1) % num_vertices;

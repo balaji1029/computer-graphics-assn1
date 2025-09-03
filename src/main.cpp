@@ -4,7 +4,7 @@
 #define DELETE 127
 
 
-#include "utils.hpp"
+#include "window.hpp"
 
 WindowManager windowManager = WindowManager(800, 800, "Hierarchical Modelling");
 
