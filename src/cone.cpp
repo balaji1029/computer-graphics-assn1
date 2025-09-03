@@ -2,7 +2,7 @@
 #include "shape_util.hpp"
 
 cone_t::cone_t(uint32_t level, GLuint vPosition, GLuint vColor) : shape_t(level) {
-    shapetype = BOX_SHAPE;
+    shapetype = CONE_SHAPE;
     centroid = glm::vec4(0.0, 0.0, 0.0, 1.0);
     color = DEFAULT_COLOR;
     this->level = level;

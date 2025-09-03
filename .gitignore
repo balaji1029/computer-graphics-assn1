@@ -40,6 +40,8 @@
 # debug information files
 *.dwo
 
+*.s
+
 bin/
 .vscode/
 .gdb_history

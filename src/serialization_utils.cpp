@@ -18,7 +18,8 @@ void dfs_print_nodes(const std::shared_ptr<node_t>& node, std::ostream& os, std:
 }
 
 std::ostream& operator<<(std::ostream& os, const node_t& node) {
-    os << node.shape->shapetype << " " << node.shape->level << "\n";
+    int shapetype_int = static_cast<int>(node.shape->shapetype);
+    os << shapetype_int << " " << node.shape->level << "\n";
     os << node.xrot << " " << node.yrot << " " << node.zrot << "\n";
     os << node.xpos << " " << node.ypos << " " << node.zpos << "\n";
     os << node.xscale << " " << node.yscale << " " << node.zscale;
