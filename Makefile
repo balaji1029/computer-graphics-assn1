@@ -4,7 +4,7 @@ OPENGLLIB= -lGL
 GLEWLIB= -lGLEW
 GLFWLIB = -lglfw
 LIBS=$(OPENGLLIB) $(GLEWLIB) $(GLFWLIB)
-CPPFLAGS=-std=c++23 -g
+CPPFLAGS=-std=c++23 -O3
 LDFLAGS=-L/usr/local/lib
 
 BINDIR=bin
