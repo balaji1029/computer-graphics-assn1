@@ -28,6 +28,7 @@ void model_t::update_centroid() {
 
 void model_t::addNode(shape_type_t type, uint32_t level) {
     node_count++;
+    std::cout << "added node" << std::endl;
     if (root_node) {
         std::shared_ptr<node_t> new_node = std::make_shared<node_t>(selected_node, type, level, vPosition, vColor);
         auto parent_node = selected_node.lock();
@@ -44,6 +45,7 @@ void model_t::addNode(shape_type_t type, uint32_t level) {
 
 void model_t::duplicateNode() {
     node_count++;
+    std::cout << "duplicated node" << std::endl;
     std::shared_ptr<node_t> current_node = selected_node.lock();
     std::shared_ptr<node_t> new_node = std::make_shared<node_t>(selected_node, current_node->shape->shapetype, current_node->shape->level, vPosition, vColor);
     new_node->xscale = current_node->xscale;
@@ -80,7 +82,6 @@ void model_t::removeSelectedNode() {
                 root_node = nullptr;
                 selected_node = std::weak_ptr<node_t>{};
             }
-            node_count--;
         }
     }
 }
