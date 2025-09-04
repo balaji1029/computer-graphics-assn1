@@ -21,16 +21,18 @@ class WindowManager {
     
     std::string vertex_shader_file = "shaders/vshader.glsl";
     std::string fragment_shader_file = "shaders/fshader.glsl";
-
+    
     glm::mat4 c_rotation_matrix;
     glm::mat4 c_view_matrix;
     glm::mat4 c_ortho_matrix;
-
+    
     bool enable_culling;
     bool enable_wireframe;
-
     
     public:
+    
+    GLfloat zoom = 3.0f;
+    bool inspection_mode = true;
     // Translation Parameters
     GLfloat xpos = 0.0, ypos = 0.0, zpos = 0.0;
     // Rotation Parameters
@@ -41,6 +43,7 @@ class WindowManager {
 
     WindowManager(int width, int height, const char* title);
     void addNode(shape_type_t type, uint32_t level);
+    void duplicateNode();
     void initBuffersGL();
     void renderGL();
     void mainLoop();

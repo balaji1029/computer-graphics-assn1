@@ -79,6 +79,10 @@ void WindowManager::addNode(shape_type_t type, uint32_t level) {
     model->addNode(type, level);
 }
 
+void WindowManager::duplicateNode() {
+    model->duplicateNode();
+}
+
 void WindowManager::renderGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -88,9 +92,9 @@ void WindowManager::renderGL() {
     c_rotation_matrix = glm::rotate(c_rotation_matrix, yrot, glm::vec3(0.0f, 1.0f, 0.0f));
     c_rotation_matrix = glm::rotate(c_rotation_matrix, zrot, glm::vec3(0.0f, 0.0f, 1.0f));
 
-    c_view_matrix = glm::lookAt(glm::vec3(0.0, 0.0, -2.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
-
-    c_ortho_matrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);
+    c_view_matrix = glm::lookAt(glm::vec3(0.0, 0.0, -2.0 * zoom), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+    
+    c_ortho_matrix = glm::ortho(-1.0f * zoom, 1.0f * zoom, -1.0f * zoom, 1.0f * zoom, 0.1f, 100.0f);
 
     matrixStack.push_back(c_ortho_matrix * c_view_matrix * c_rotation_matrix);
 
@@ -113,7 +117,7 @@ void WindowManager::renderGL() {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
     if (model) {
-        model->draw(matrixStack, uModelViewProjectMatrix);
+        model->draw(matrixStack, uModelViewProjectMatrix, inspection_mode);
     }
     glFlush();
 }

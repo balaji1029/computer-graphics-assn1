@@ -18,11 +18,26 @@ void dfs_print_nodes(const std::shared_ptr<node_t>& node, std::ostream& os, std:
 }
 
 std::ostream& operator<<(std::ostream& os, const node_t& node) {
-    int shapetype_int = static_cast<int>(node.shape->shapetype);
+    int shapetype_int;
+    switch(node.shape->shapetype) {
+        case shape_type_t::SPHERE_SHAPE:
+            shapetype_int = 0;
+            break;
+        case shape_type_t::CYLINDER_SHAPE:
+            shapetype_int = 1;
+            break;
+        case shape_type_t::BOX_SHAPE:
+            shapetype_int = 2;
+            break;
+        case shape_type_t::CONE_SHAPE:
+            shapetype_int = 3;
+            break;
+    }
     os << shapetype_int << " " << node.shape->level << "\n";
     os << node.xrot << " " << node.yrot << " " << node.zrot << "\n";
     os << node.xpos << " " << node.ypos << " " << node.zpos << "\n";
-    os << node.xscale << " " << node.yscale << " " << node.zscale;
+    os << node.xscale << " " << node.yscale << " " << node.zscale << "\n";
+    os << node.shape->color.r << " " << node.shape->color.g << " " << node.shape->color.b << " " << node.shape->color.a;
     return os;
 }
 
@@ -56,11 +71,33 @@ std::shared_ptr<model_t> read_model(std::istream& is, GLuint vPosition, GLuint v
     for (int i = 0; i < node_count; ++i) {
         int shapetype_int, level;
         is >> shapetype_int >> level;
-        shape_type_t shapetype = static_cast<shape_type_t>(shapetype_int);
+        shape_type_t shapetype;
+        switch (shapetype_int) {
+            case 0:
+                shapetype = shape_type_t::SPHERE_SHAPE;
+                break;
+            case 1:
+                shapetype = shape_type_t::CYLINDER_SHAPE;
+                break;
+            case 2:
+                shapetype = shape_type_t::BOX_SHAPE;
+                break;
+            case 3:
+                shapetype = shape_type_t::CONE_SHAPE;
+                break;
+            default:
+                throw std::runtime_error("Invalid shape type in model file");
+        }
         nodes[i] = std::make_shared<node_t>(std::weak_ptr<node_t>{}, shapetype, level, vPosition, vColor);
         is >> nodes[i]->xrot >> nodes[i]->yrot >> nodes[i]->zrot;
         is >> nodes[i]->xpos >> nodes[i]->ypos >> nodes[i]->zpos;
         is >> nodes[i]->xscale >> nodes[i]->yscale >> nodes[i]->zscale;
+        is >> nodes[i]->shape->color.r >> nodes[i]->shape->color.g >> nodes[i]->shape->color.b >> nodes[i]->shape->color.a;
+        nodes[i]->set_color(nodes[i]->shape->color);
+        nodes[i]->centroid += glm::vec4(nodes[i]->xpos, nodes[i]->ypos, nodes[i]->zpos, 0);
+        // std::cout << "Read Node " << i << " with shape type " << shapetype_int << " level " << level << "\n";
+        nodes[i]->index = i;
+        // std::cout << "Position: " << nodes[i]->xpos << ", " << nodes[i]->ypos << ", " << nodes[i]->zpos << "\n";
     }
     for (int i = 0; i < node_count; ++i) {
         int child_count;
@@ -70,6 +107,7 @@ std::shared_ptr<model_t> read_model(std::istream& is, GLuint vPosition, GLuint v
             is >> child_index;
             nodes[i]->add_child(nodes[child_index]);
             nodes[child_index]->parent = nodes[i];
+            nodes[child_index]->centroid += nodes[i]->centroid;
         }
     }
     auto model = std::make_shared<model_t>(vPosition, vColor);

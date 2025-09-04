@@ -25,6 +25,7 @@ public:
     shape_type_t shapetype;
     uint32_t level;
     glm::vec4 color;
+
     std::vector<float> color_factors;
     
     GLuint vao, vbo;

@@ -35,6 +35,7 @@ namespace csX75 {
 		ROTATE,
 		TRANSLATE,
 		SCALE,
+		ZOOM,
 		NONE,
 	};
 
@@ -60,73 +61,84 @@ namespace csX75 {
 			// -----MODELLING MODE-----
 			if(current_home_mode == MODELLING)
 				switch (key) {
-					case GLFW_KEY_I:
-						current_home_mode = INSPECTION;
-						break;
-					case GLFW_KEY_ESCAPE:
-						glfwSetWindowShouldClose(window, GL_TRUE);
-						break;
-					case GLFW_KEY_R:
-						if (current_mode != ROTATE) {
-							current_mode = ROTATE;
-						}
-						break;
-					case GLFW_KEY_T:
-						if (current_mode != TRANSLATE) {
-							current_mode = TRANSLATE;
-						}
-						break;
-					case GLFW_KEY_G:
-						if (current_mode != SCALE) {
-							current_mode = SCALE;
-						}
-						break;
-					case GLFW_KEY_C:
-						if (windowManager.model->selected_node.lock()) {
-							float r, g, b;
-							std::cout << "Enter RGB values between 0 and 1 seperated with spaces: ";
-							std::cin >> r >> g >> b;
-							std::cout << "Color set to (" << r << ", " << g << ", " << b << ")\n";
-							auto node = windowManager.model->selected_node.lock();
-							node->set_color(glm::vec4(r, g, b, 1.0f));
-						}
-						break;
-					case GLFW_KEY_S:
-						if (!windowManager.model) {
-							std::cerr << "No model to serialize\n";
+				case GLFW_KEY_I:
+					current_home_mode = INSPECTION;
+					windowManager.inspection_mode = true;
+					break;
+				case GLFW_KEY_ESCAPE:
+					glfwSetWindowShouldClose(window, GL_TRUE);
+					break;
+				case GLFW_KEY_R:
+					if (current_mode != ROTATE) {
+						current_mode = ROTATE;
+					}
+					break;
+				case GLFW_KEY_T:
+					if (current_mode != TRANSLATE) {
+						current_mode = TRANSLATE;
+					}
+					break;
+				case GLFW_KEY_G:
+					if (current_mode != SCALE) {
+						current_mode = SCALE;
+					}
+					break;
+				case GLFW_KEY_V:
+					if (current_mode != ZOOM) {
+						current_mode = ZOOM;
+					}
+					break;
+				case GLFW_KEY_D:
+					if (windowManager.model->selected_node.lock()) {
+						windowManager.duplicateNode();
+					}
+					break;
+				case GLFW_KEY_C:
+					if (windowManager.model->selected_node.lock()) {
+						int r, g, b;
+						std::cout << "Enter RGB values (integers) between 0 and 255 seperated with spaces: ";
+						std::cin >> r >> g >> b;
+						std::cout << "Color set to (" << r << ", " << g << ", " << b << ")\n";
+						auto node = windowManager.model->selected_node.lock();
+						node->set_color(glm::vec4((float)r / 255, (float)g / 255,(float) b / 255, 1.0f));
+					}
+					break;
+				case GLFW_KEY_S:
+					if (!windowManager.model) {
+						std::cerr << "No model to serialize\n";
+					} else {
+						std::string filename;
+						std::cout << "Enter filename to serialize to: ";
+						std::cin >> filename;
+						filename = "models/" + filename;
+						std::ofstream ofs(filename);
+						if (!ofs) {
+							std::cerr << "Error opening file " << filename << " for writing\n";
 						} else {
-							std::string filename;
-							std::cout << "Enter filename to serialize to: ";
-							std::cin >> filename;
-							filename = "models/" + filename;
-							std::ofstream ofs(filename);
-							if (!ofs) {
-								std::cerr << "Error opening file " << filename << " for writing\n";
-							} else {
-								ofs << *(windowManager.model);
-								ofs.close();
-								std::cout << "Model serialized to " << filename << "\n";
-							}
+							ofs << *(windowManager.model);
+							ofs.close();
+							std::cout << "Model serialized to " << filename << "\n";
 						}
-						break;
-					case GLFW_KEY_1:
-						windowManager.addNode(shape_type_t::SPHERE_SHAPE, 4);
-						break;
-					case GLFW_KEY_2:
-						windowManager.addNode(shape_type_t::CYLINDER_SHAPE, 4);
-						break;
-					case GLFW_KEY_3:
-						windowManager.addNode(shape_type_t::BOX_SHAPE, 4);
-						break;
-					case GLFW_KEY_4:
-						windowManager.addNode(shape_type_t::CONE_SHAPE, 4);
-						break;
-					case GLFW_KEY_5:
-						windowManager.model->removeSelectedNode();
-						break;
-					case GLFW_KEY_Q:
-						current_mode = NONE;
-						break;
+					}
+					break;
+				case GLFW_KEY_1:
+					windowManager.addNode(shape_type_t::SPHERE_SHAPE, 4);
+					break;
+				case GLFW_KEY_2:
+					windowManager.addNode(shape_type_t::CYLINDER_SHAPE, 4);
+					break;
+				case GLFW_KEY_3:
+					windowManager.addNode(shape_type_t::BOX_SHAPE, 4);
+					break;
+				case GLFW_KEY_4:
+					windowManager.addNode(shape_type_t::CONE_SHAPE, 4);
+					break;
+				case GLFW_KEY_5:
+					windowManager.model->removeSelectedNode();
+					break;
+				case GLFW_KEY_Q:
+					current_mode = NONE;
+					break;
 				case GLFW_KEY_X:
 					current_axis = X;
 					break;
@@ -143,13 +155,13 @@ namespace csX75 {
 							auto node = windowManager.model->selected_node.lock();
 							switch (current_axis) {
 							case X:
-								node->xrot += M_PI / 10;
+								node->rotate_by(glm::vec3(1.0f, 0.0f, 0.0f), M_PI / 10);
 								break;
 							case Y:
-								node->yrot += M_PI / 10;
+								node->rotate_by(glm::vec3(0.0f, 1.0f, 0.0f), M_PI / 10);
 								break;
 							case Z:
-								node->zrot += M_PI / 10;
+								node->rotate_by(glm::vec3(0.0f, 0.0f, 1.0f), M_PI / 10);
 								break;
 							}
 						}
@@ -158,13 +170,13 @@ namespace csX75 {
 							auto node = windowManager.model->selected_node.lock();
 							switch (current_axis) {
 							case X:
-								node->xscale += 0.1f;
+								node->scale_by(glm::vec3(0.1f, 0, 0));
 								break;
 							case Y:
-								node->yscale += 0.1f;
+								node->scale_by(glm::vec3(0, 0.1f, 0));
 								break;
 							case Z:
-								node->zscale += 0.1f;
+								node->scale_by(glm::vec3(0, 0, 0.1f));
 								break;
 							}
 						}
@@ -173,19 +185,19 @@ namespace csX75 {
 							auto node = windowManager.model->selected_node.lock();
 							switch (current_axis) {
 							case X:
-								node->xpos += 0.1f;
-								node->centroid += glm::vec4(0.1f, 0, 0, 0);
+								node->move_by(glm::vec4(0.1f, 0, 0, 0));
 								break;
 							case Y:
-								node->ypos += 0.1f;
-								node->centroid += glm::vec4(0, 0.1f, 0, 0);
+								node->move_by(glm::vec4(0, 0.1f, 0, 0));
 								break;
 							case Z:
-								node->zpos += 0.1f;
-								node->centroid += glm::vec4(0, 0, 0.1f, 0);
+								node->move_by(glm::vec4(0, 0, 0.1f, 0));
 								break;
 							}
 						}
+					} else if (current_mode == ZOOM) {
+						windowManager.zoom -= 0.1f;
+						if (windowManager.zoom < 0.1f) windowManager.zoom = 0.1f;
 					} else if (current_mode == NONE) {	
 						switch(current_axis) {
 						case X:
@@ -207,13 +219,13 @@ namespace csX75 {
 							auto node = windowManager.model->selected_node.lock();
 							switch (current_axis) {
 							case X:
-								node->xrot -= M_PI / 10;
+								node->rotate_by(glm::vec3(1.0f, 0.0f, 0.0f), -M_PI / 10);
 								break;
 							case Y:
-								node->yrot -= M_PI / 10;
+								node->rotate_by(glm::vec3(0.0f, 1.0f, 0.0f), -M_PI / 10);
 								break;
 							case Z:
-								node->zrot -= M_PI / 10;
+								node->rotate_by(glm::vec3(0.0f, 0.0f, 1.0f), -M_PI / 10);
 								break;
 							}
 						}
@@ -222,16 +234,13 @@ namespace csX75 {
 							auto node = windowManager.model->selected_node.lock();
 							switch (current_axis) {
 							case X:
-								node->xscale -= 0.1f;
-								if (node->xscale < 0.1f) node->xscale = 0.1f;
+								node->scale_by(glm::vec3(-0.1f, 0, 0));
 								break;
 							case Y:
-								node->yscale -= 0.1f;
-								if (node->yscale < 0.1f) node->yscale = 0.1f;
+								node->scale_by(glm::vec3(0, -0.1f, 0));
 								break;
 							case Z:
-								node->zscale -= 0.1f;
-								if (node->zscale < 0.1f) node->zscale = 0.1f;
+								node->scale_by(glm::vec3(0, 0, -0.1f));
 								break;
 							}
 						}
@@ -240,19 +249,18 @@ namespace csX75 {
 							auto node = windowManager.model->selected_node.lock();
 							switch (current_axis) {
 							case X:
-								node->xpos -= 0.1f;
-								node->centroid -= glm::vec4(0.1f, 0, 0, 0);
+								node->move_by(glm::vec4(-0.1f, 0, 0, 0));
 								break;
 							case Y:
-								node->ypos -= 0.1f;
-								node->centroid -= glm::vec4(0, 0.1f, 0, 0);
+								node->move_by(glm::vec4(0, -0.1f, 0, 0));
 								break;
 							case Z:
-								node->zpos -= 0.1f;
-								node->centroid -= glm::vec4(0, 0, 0.1f, 0);
+								node->move_by(glm::vec4(0, 0, -0.1f, 0));
 								break;
 							}
 						}
+					} else if (current_mode == ZOOM) {
+						windowManager.zoom += 0.1f;
 					} else if (current_mode == NONE) {
 						switch(current_axis) {
 						case X:
@@ -273,162 +281,93 @@ namespace csX75 {
 			// -----INSPECTION MODE-----
 			else
 			switch (key){
-				case GLFW_KEY_M:
-					current_home_mode = MODELLING;
+			case GLFW_KEY_ESCAPE:
+					glfwSetWindowShouldClose(window, GL_TRUE);
 					break;
-				case GLFW_KEY_L:
-					{	
-						std::string filename;
-						std::cout << "Enter filename to load from: ";
-						std::cin >> filename;
-						filename = "models/" + filename;
-					
-						std::ifstream ifs(filename);
-						if (!ifs) {
-							std::cerr << "Error opening file " << filename << " for reading\n";
-						} else {
-							windowManager.model = std::make_shared<model_t>(windowManager.vPosition, windowManager.vColor);
-							ifs >> *(windowManager.model);
-							ifs.close();
-							std::cout << "Model loaded from " << filename << "\n";
-						}
+			case GLFW_KEY_M:
+				current_home_mode = MODELLING;
+				windowManager.inspection_mode = false;
+				break;
+			case GLFW_KEY_L:
+				{	
+					std::string filename;
+					std::cout << "Enter filename to load from: ";
+					std::cin >> filename;
+					filename = "models/" + filename;
+				
+					std::ifstream ifs(filename);
+					if (!ifs) {
+						std::cerr << "Error opening file " << filename << " for reading\n";
+					} else {
+						windowManager.model = std::make_shared<model_t>(windowManager.vPosition, windowManager.vColor);
+						ifs >> *(windowManager.model);
+						ifs.close();
+						std::cout << "Model loaded from " << filename << "\n";
 					}
-				case GLFW_KEY_X:
-					current_axis = X;
-					break;
-				case GLFW_KEY_Y:
-					current_axis = Y;
-					break;
-				case GLFW_KEY_Z:
-					current_axis = Z;
-					break;
-				case GLFW_KEY_UP:
-				case GLFW_KEY_EQUAL:
-					if (current_mode == ROTATE) {
-						if (windowManager.model->selected_node.lock()) {
-							auto node = windowManager.model->selected_node.lock();
-							switch (current_axis) {
-							case X:
-								node->xrot += M_PI / 10;
-								break;
-							case Y:
-								node->yrot += M_PI / 10;
-								break;
-							case Z:
-								node->zrot += M_PI / 10;
-								break;
-							}
-						}
-					} else if (current_mode == SCALE) {
-						if (windowManager.model->selected_node.lock()) {
-							auto node = windowManager.model->selected_node.lock();
-							switch (current_axis) {
-							case X:
-								node->xscale += 0.1f;
-								break;
-							case Y:
-								node->yscale += 0.1f;
-								break;
-							case Z:
-								node->zscale += 0.1f;
-								break;
-							}
-						}
-					} else if (current_mode == TRANSLATE) {
-						if (windowManager.model->selected_node.lock()) {
-							auto node = windowManager.model->selected_node.lock();
-							switch (current_axis) {
-							case X:
-								node->xpos += 0.1f;
-								break;
-							case Y:
-								node->ypos += 0.1f;
-								break;
-							case Z:
-								node->zpos += 0.1f;
-								break;
-							}
-						}
-					} else if (current_mode == NONE) {	
-						switch(current_axis) {
+				}
+			case GLFW_KEY_R:
+				if (current_mode != ROTATE) {
+					current_mode = ROTATE;
+				}
+				break;
+			case GLFW_KEY_V:
+				if (current_mode != ZOOM) {
+					current_mode = ZOOM;
+				}
+				break;
+			case GLFW_KEY_X:
+				current_axis = X;
+				break;
+			case GLFW_KEY_Y:
+				current_axis = Y;
+				break;
+			case GLFW_KEY_Z:
+				current_axis = Z;
+				break;
+			case GLFW_KEY_UP:
+			case GLFW_KEY_EQUAL:
+				if (current_mode == ROTATE) {
+					if (windowManager.model) {
+						switch (current_axis) {
 						case X:
-							windowManager.xrot += M_PI / 10;
+							windowManager.model->xrot += M_PI / 10;
 							break;
 						case Y:
-							windowManager.yrot += M_PI / 10;
+							windowManager.model->yrot += M_PI / 10;
 							break;
 						case Z:
-							windowManager.zrot += M_PI / 10;
+							windowManager.model->zrot += M_PI / 10;
 							break;
 						}
 					}
-					break;
-				case GLFW_KEY_DOWN:
-				case GLFW_KEY_MINUS:
-					if (current_mode == ROTATE) {
-						if (windowManager.model->selected_node.lock()) {
-							auto node = windowManager.model->selected_node.lock();
-							switch (current_axis) {
-							case X:
-								node->xrot -= M_PI / 10;
-								break;
-							case Y:
-								node->yrot -= M_PI / 10;
-								break;
-							case Z:
-								node->zrot -= M_PI / 10;
-								break;
-							}
-						}
-					} else if (current_mode == SCALE) {
-						if (windowManager.model->selected_node.lock()) {
-							auto node = windowManager.model->selected_node.lock();
-							switch (current_axis) {
-							case X:
-								node->xscale -= 0.1f;
-								if (node->xscale < 0.1f) node->xscale = 0.1f;
-								break;
-							case Y:
-								node->yscale -= 0.1f;
-								if (node->yscale < 0.1f) node->yscale = 0.1f;
-								break;
-							case Z:
-								node->zscale -= 0.1f;
-								if (node->zscale < 0.1f) node->zscale = 0.1f;
-								break;
-							}
-						}
-					} else if (current_mode == TRANSLATE) {
-						if (windowManager.model->selected_node.lock()) {
-							auto node = windowManager.model->selected_node.lock();
-							switch (current_axis) {
-							case X:
-								node->xpos -= 0.1f;
-								break;
-							case Y:
-								node->ypos -= 0.1f;
-								break;
-							case Z:
-								node->zpos -= 0.1f;
-								break;
-							}
-						}
-					} else if (current_mode == NONE) {
-						switch(current_axis) {
+				} else if (current_mode == ZOOM) {
+					windowManager.zoom -= 0.1f;
+					if (windowManager.zoom < 0.1f) windowManager.zoom = 0.1f;
+				}
+				break;
+			case GLFW_KEY_DOWN:
+			case GLFW_KEY_MINUS:
+				if (current_mode == ROTATE) {
+					if (windowManager.model->selected_node.lock()) {
+						auto node = windowManager.model->selected_node.lock();
+						switch (current_axis) {
 						case X:
-							windowManager.xrot -= M_PI / 10;
+							windowManager.model->xrot -= M_PI / 10;
 							break;
 						case Y:
-							windowManager.yrot -= M_PI / 10;
+							windowManager.model->yrot -= M_PI / 10;
 							break;
 						case Z:
-							windowManager.zrot -= M_PI / 10;
+							windowManager.model->zrot -= M_PI / 10;
 							break;
 						}
 					}
-					break;
-				default:
-					break;
+				} else if (current_mode == ZOOM) {
+					windowManager.zoom += 0.1f;
+				}
+				break;
+			default:
+				break;
 			}
 		}
 	}

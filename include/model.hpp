@@ -23,6 +23,11 @@ public:
     void add_child(const std::shared_ptr<node_t>& child);
     void draw(std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const;
     void set_color(const glm::vec4& new_color);
+
+    void move_by(const glm::vec4& delta);
+    void rotate_by(const glm::vec3& axis, float angle);
+    void scale_by(const glm::vec3& factor);
+
     friend std::ostream& operator<<(std::ostream& os, const node_t& node);
 };
 
@@ -38,8 +43,9 @@ public:
     GLfloat xrot{0}, yrot{0}, zrot{0};
     model_t(GLuint vPosition = 0, GLuint vColor = 0);
     void addNode(shape_type_t type, uint32_t level);
+    void duplicateNode();
     void removeSelectedNode();
-    void draw(std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const;
+    void draw(std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix, bool inspection_mode = false);;
 
     friend std::ostream& operator<<(std::ostream& os, const model_t& model);
     friend std::istream& operator>>(std::istream& is, model_t& model);
