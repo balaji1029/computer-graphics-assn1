@@ -6,11 +6,26 @@ model_t::model_t(GLuint vPosition, GLuint vColor) : vPosition{ vPosition }, vCol
     selected_node = std::weak_ptr<node_t>{};
 }
 
+void model_t::update_centroid() {
+    glm::vec4 new_centroid;
+    auto dfs = [&new_centroid] (auto&& self, std::shared_ptr<node_t> curr) -> void {
+        new_centroid += curr->shape->centroid;
+        for(auto child:curr->children) {
+            self(self, child);
+        }
+    };
+    dfs(dfs, root_node);
+    new_centroid /= node_count;
+    centroid = new_centroid;
+}
+
 void model_t::addNode(shape_type_t type, uint32_t level) {
     node_count++;
     if (root_node) {
         std::shared_ptr<node_t> new_node = std::make_shared<node_t>(selected_node, type, level, vPosition, vColor);
         auto parent_node = selected_node.lock();
+        new_node->shape->centroid = parent_node->shape->centroid;
+        update_centroid();
         parent_node->add_child(new_node);
         selected_node = new_node;
     }

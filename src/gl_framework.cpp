@@ -60,6 +60,9 @@ namespace csX75 {
 			// -----MODELLING MODE-----
 			if(current_home_mode == MODELLING)
 				switch (key) {
+					case GLFW_KEY_I:
+						current_home_mode = INSPECTION;
+						break;
 					case GLFW_KEY_ESCAPE:
 						glfwSetWindowShouldClose(window, GL_TRUE);
 						break;
@@ -171,12 +174,15 @@ namespace csX75 {
 							switch (current_axis) {
 							case X:
 								node->xpos += 0.1f;
+								node->centroid += glm::vec4(0.1f, 0, 0, 0);
 								break;
 							case Y:
 								node->ypos += 0.1f;
+								node->centroid += glm::vec4(0, 0.1f, 0, 0);
 								break;
 							case Z:
 								node->zpos += 0.1f;
+								node->centroid += glm::vec4(0, 0, 0.1f, 0);
 								break;
 							}
 						}
@@ -235,12 +241,15 @@ namespace csX75 {
 							switch (current_axis) {
 							case X:
 								node->xpos -= 0.1f;
+								node->centroid -= glm::vec4(0.1f, 0, 0, 0);
 								break;
 							case Y:
 								node->ypos -= 0.1f;
+								node->centroid -= glm::vec4(0, 0.1f, 0, 0);
 								break;
 							case Z:
 								node->zpos -= 0.1f;
+								node->centroid -= glm::vec4(0, 0, 0.1f, 0);
 								break;
 							}
 						}
@@ -264,6 +273,9 @@ namespace csX75 {
 			// -----INSPECTION MODE-----
 			else
 			switch (key){
+				case GLFW_KEY_M:
+					current_home_mode = MODELLING;
+					break;
 				case GLFW_KEY_L:
 					{	
 						std::string filename;

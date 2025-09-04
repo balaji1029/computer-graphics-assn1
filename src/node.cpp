@@ -3,6 +3,10 @@
 
 node_t::node_t(const std::weak_ptr<node_t>& parent, enum shape_type_t type, uint32_t level, GLuint vPosition, GLuint vColor){
     this->parent = parent;
+    if (parent.lock()) {
+        auto p = parent.lock();
+        this->centroid = p->centroid;
+    }
     xrot = yrot = zrot = 0.0f;
     xpos = ypos = zpos = 0.0f;
     xscale = yscale = zscale = 1.0f;
