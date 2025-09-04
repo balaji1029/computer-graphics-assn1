@@ -42,7 +42,7 @@ Esc → Exit the program
 
 <!-- add a table for the keymaps -->
 
-
+By default the window is in Inspection mode. To Go to Modelling mode, press 'M'.
 | Key(s)     | Action                                      |
 |------------|---------------------------------------------|
 | **1**      | Add Sphere                                  |
@@ -50,15 +50,18 @@ Esc → Exit the program
 | **3**      | Add Box                                     |
 | **4**      | Add Cone                                    |
 | **5**      | Remove last shape                           |
+| **D**      | Duplicate the current shape |
 | **R**      | Enter rotation mode                         |
 | **X / Y / Z** | Select axis (rotation/translation/scaling) |
-| **+ / -**  | Rotate around chosen axis                   |
+| **+ / -** or **UP / DOWN**  | Rotate around chosen axis                   |
 | **T**      | Enter translation mode                      |
 | **+ / -** or **UP / DOWN** | Translate along chosen axis |
 | **G**      | Enter scaling mode                          |
 | **+ / -** or **UP / DOWN**  | Scale along chosen axis    |
 | **C**      | Change colour (enter RGB on terminal)       |
 | **S**      | Save model to `.mod` file                   |
+| **V**      | To change Zoom |
+|**+ / -**     | Zoom In/Out respectively |
 
 ### Inspection Mode
 
@@ -71,13 +74,11 @@ Saved files:
 
 model1.mod
 
+ ![alt text](model1.png)
+
 model2.mod
 
-Snapshots
-
-(Insert screenshots of your two models here — you can use ![alt text](path/to/image.png) for Markdown images.)
-
-Example:
+ ![alt text](model2.png)
 
 
 
