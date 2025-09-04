@@ -95,9 +95,7 @@ std::shared_ptr<model_t> read_model(std::istream& is, GLuint vPosition, GLuint v
         is >> nodes[i]->shape->color.r >> nodes[i]->shape->color.g >> nodes[i]->shape->color.b >> nodes[i]->shape->color.a;
         nodes[i]->set_color(nodes[i]->shape->color);
         nodes[i]->centroid += glm::vec4(nodes[i]->xpos, nodes[i]->ypos, nodes[i]->zpos, 0);
-        // std::cout << "Read Node " << i << " with shape type " << shapetype_int << " level " << level << "\n";
         nodes[i]->index = i;
-        // std::cout << "Position: " << nodes[i]->xpos << ", " << nodes[i]->ypos << ", " << nodes[i]->zpos << "\n";
     }
     for (int i = 0; i < node_count; ++i) {
         int child_count;

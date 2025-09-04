@@ -50,7 +50,7 @@ WindowManager::WindowManager(int width, int height, const char* title) {
     // Ensure we can capture the escape key being pressed below
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-    enable_culling = true;
+    enable_culling = false;
     enable_wireframe = false;
 
 
