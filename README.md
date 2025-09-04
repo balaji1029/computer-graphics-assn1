@@ -50,6 +50,7 @@ Esc → Exit the program
 | **3**      | Add Box                                     |
 | **4**      | Add Cone                                    |
 | **5**      | Remove last shape                           |
+| **D**      | Duplicate the current shape |
 | **R**      | Enter rotation mode                         |
 | **X / Y / Z** | Select axis (rotation/translation/scaling) |
 | **+ / -**  | Rotate around chosen axis                   |
