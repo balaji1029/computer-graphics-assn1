@@ -53,7 +53,7 @@ Esc → Exit the program
 | **D**      | Duplicate the current shape |
 | **R**      | Enter rotation mode                         |
 | **X / Y / Z** | Select axis (rotation/translation/scaling) |
-| **+ / -**  | Rotate around chosen axis                   |
+| **+ / -** or **UP / DOWN**  | Rotate around chosen axis                   |
 | **T**      | Enter translation mode                      |
 | **+ / -** or **UP / DOWN** | Translate along chosen axis |
 | **G**      | Enter scaling mode                          |
@@ -70,15 +70,13 @@ Esc → Exit the program
 
 Saved files:
 
-model1.mod
+model1
 
-model2.mod
+ ![alt text](models/model1.png)
 
-Snapshots
+model2
 
-(Insert screenshots of your two models here — you can use ![alt text](path/to/image.png) for Markdown images.)
-
-Example:
+ ![alt text](models/model2.png)
 
 
 
