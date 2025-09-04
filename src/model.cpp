@@ -28,7 +28,6 @@ void model_t::update_centroid() {
 
 void model_t::addNode(shape_type_t type, uint32_t level) {
     node_count++;
-    std::cout << "added node" << std::endl;
     if (root_node) {
         std::shared_ptr<node_t> new_node = std::make_shared<node_t>(selected_node, type, level, vPosition, vColor);
         auto parent_node = selected_node.lock();
@@ -45,7 +44,6 @@ void model_t::addNode(shape_type_t type, uint32_t level) {
 
 void model_t::duplicateNode() {
     node_count++;
-    std::cout << "duplicated node" << std::endl;
     std::shared_ptr<node_t> current_node = selected_node.lock();
     std::shared_ptr<node_t> new_node = std::make_shared<node_t>(selected_node, current_node->shape->shapetype, current_node->shape->level, vPosition, vColor);
     new_node->xscale = current_node->xscale;
@@ -89,9 +87,9 @@ void model_t::removeSelectedNode() {
 void model_t::draw(std::vector<glm::mat4, std::allocator<glm::mat4>>& matrixStack, GLuint uModelViewMatrix, bool inspection_mode) {
     this->update_centroid();
     glm::mat4 neg_centroid = glm::translate(glm::mat4(1.0f), -glm::vec3(centroid));
-    glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), static_cast<float>(xrot), glm::vec3(1.0f, 0.0f, 0.0f));
-    rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(yrot), glm::vec3(0.0f, 1.0f, 0.0f));
-    rotation_matrix = glm::rotate(rotation_matrix, static_cast<float>(zrot), glm::vec3(0.0f, 0.0f, 1.0f));
+    glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), xrot, glm::vec3(1.0f, 0.0f, 0.0f));
+    rotation_matrix = glm::rotate(rotation_matrix, yrot, glm::vec3(0.0f, 1.0f, 0.0f));
+    rotation_matrix = glm::rotate(rotation_matrix, zrot, glm::vec3(0.0f, 0.0f, 1.0f));
     glm::mat4 pos_centroid = glm::translate(glm::mat4(1.0f), glm::vec3(centroid));
     // std::cout << "Model Centroid: " << centroid.x << ", " << centroid.y << ", " << centroid.z << "\n";
     if (inspection_mode) {

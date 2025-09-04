@@ -42,7 +42,7 @@ Esc → Exit the program
 
 <!-- add a table for the keymaps -->
 
-
+By default the window is in Inspection mode. To Go to Modelling mode, press 'M'.
 | Key(s)     | Action                                      |
 |------------|---------------------------------------------|
 | **1**      | Add Sphere                                  |
@@ -60,6 +60,8 @@ Esc → Exit the program
 | **+ / -** or **UP / DOWN**  | Scale along chosen axis    |
 | **C**      | Change colour (enter RGB on terminal)       |
 | **S**      | Save model to `.mod` file                   |
+| **V**      | To change Zoom |
+|**+ / -**     | Zoom In/Out respectively |
 
 ### Inspection Mode
 
@@ -70,13 +72,13 @@ Esc → Exit the program
 
 Saved files:
 
-model1
+model1.mod
 
- ![alt text](models/model1.png)
+ ![alt text](model1.png)
 
-model2
+model2.mod
 
- ![alt text](models/model2.png)
+ ![alt text](model2.png)
 
 
 
