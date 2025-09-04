@@ -7,6 +7,7 @@
 
 #include "shape.hpp"
 #include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 class node_t {
 public:
@@ -34,7 +35,7 @@ public:
     std::shared_ptr<node_t> root_node;
     std::weak_ptr<node_t> selected_node;
     GLuint vPosition, vColor;
-    GLfloat xrot{0}, yrot{0}, zrot;
+    GLfloat xrot{0}, yrot{0}, zrot{0};
     model_t(GLuint vPosition = 0, GLuint vColor = 0);
     void addNode(shape_type_t type, uint32_t level);
     void removeSelectedNode();

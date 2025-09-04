@@ -64,7 +64,9 @@ void model_t::removeSelectedNode() {
     }
 }
 
-void model_t::draw(std::vector<glm::mat4>& matrixStack, GLuint uModelViewMatrix) const {
+void model_t::draw(std::vector<glm::mat4, std::allocator<glm::mat4>>& matrixStack, GLuint uModelViewMatrix) const {
+    glm::mat4 neg_centroid = glm::translate(, -this->centroid);
+    
     if (root_node) {
         root_node->draw(matrixStack, uModelViewMatrix);
     }
